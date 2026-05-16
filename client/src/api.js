@@ -1,10 +1,9 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://homefil-backed.onrender.com/api',
 });
 
-// This attaches the login token to every request automatically
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {

@@ -54,7 +54,7 @@ function ListingDetails() {
         {/* Product image */}
         {listing.image ? (
           <img
-            src={`http://localhost:5000/uploads/${listing.image}`}
+            src={`https://homefil-backed.onrender.com/uploads/${listing.image}`}
             alt={listing.productType}
             style={{
               width: '100%',
