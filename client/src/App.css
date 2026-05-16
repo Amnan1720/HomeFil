@@ -1,0 +1,69 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fa;
+  color: #222;
+}
+
+.app-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.navbar {
+  background: #1a73e8;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.navbar .logo { color: white; font-size: 20px; font-weight: 700; text-decoration: none; }
+.navbar a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; }
+
+.btn { display: inline-block; padding: 12px 20px; border-radius: 8px;
+       font-size: 16px; font-weight: 600; cursor: pointer; border: none;
+       text-align: center; text-decoration: none; width: 100%; margin-top: 8px; }
+.btn-blue   { background: #1a73e8; color: white; }
+.btn-green  { background: #2e7d32; color: white; }
+.btn-orange { background: #f57c00; color: white; }
+.btn-red    { background: #c62828; color: white; }
+.btn-outline { background: white; color: #1a73e8; border: 2px solid #1a73e8; }
+
+.card { background: white; border-radius: 12px; padding: 16px;
+        margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.card h3 { font-size: 16px; margin-bottom: 6px; }
+.card p  { font-size: 14px; color: #555; margin-bottom: 4px; }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px;
+         font-size: 12px; font-weight: 600; margin-right: 6px; margin-bottom: 6px; }
+.badge-blue   { background: #e3f2fd; color: #1565c0; }
+.badge-orange { background: #fff3e0; color: #e65100; }
+.badge-green  { background: #e8f5e9; color: #2e7d32; }
+.badge-gray   { background: #f5f5f5; color: #666; }
+
+input, select, textarea {
+  width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+  font-size: 15px; margin-bottom: 12px; font-family: inherit;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: #1a73e8; }
+label { font-size: 14px; color: #444; display: block; margin-bottom: 4px; }
+
+.disclaimer { background: #fff8e1; border-left: 4px solid #f9a825;
+              padding: 12px; border-radius: 6px; font-size: 13px;
+              color: #5d4037; margin: 16px 0; }
+
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-bar select { margin-bottom: 0; flex: 1; min-width: 120px; }
+
+.pay-tag { background: #e8f5e9; color: #2e7d32; font-weight: 700;
+           padding: 8px 14px; border-radius: 8px; text-align: center;
+           font-size: 14px; margin: 12px 0; }
