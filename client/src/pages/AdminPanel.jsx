@@ -1,310 +1,320 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import API from '../api';
 
-const EMPTY_FORM = {
-  category: 'water', serviceType: 'refill', productType: '',
-  price: '', location: '', phone: '', whatsapp: '',
-  deliveryAvailable: false, deliveryTime: '', status: 'available'
-};
-
-function Dashboard() {
+function AdminPanel() {
+  const [tab, setTab] = useState('stats');
+  const [stats, setStats] = useState({});
+  const [suppliers, setSuppliers] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [listings, setListings] = useState([]);
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [editId, setEditId] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const token = localStorage.getItem('token');
+  const [requests, setRequests] = useState([]);
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
 
   useEffect(() => {
-    fetchMyListings();
+    if (!user || user.role !== 'admin') {
+      navigate('/');
+      return;
+    }
+    fetchStats();
   }, []);
 
-  async function fetchMyListings() {
+  useEffect(() => {
+    if (tab === 'stats')     fetchStats();
+    if (tab === 'suppliers') fetchSuppliers();
+    if (tab === 'customers') fetchCustomers();
+    if (tab === 'listings')  fetchListings();
+    if (tab === 'requests')  fetchRequests();
+  }, [tab]);
+
+  async function fetchStats() {
     try {
-      const res = await axios.get('http://localhost:5000/api/listings');
-      setListings(res.data.filter(l => l.supplierId === user.id));
-    } catch (err) {
-      console.error(err);
-    }
+      const res = await API.get('/admin/stats');
+      setStats(res.data);
+    } catch (err) { console.error(err); }
   }
 
-  function handleChange(e) {
-    const val = e.target.type === 'checkbox'
-      ? e.target.checked : e.target.value;
-    setForm({ ...form, [e.target.name]: val });
-  }
-
-  function handleImageChange(e) {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      // Show a preview of the selected image
-      setImagePreview(URL.createObjectURL(file));
-    }
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-
+  async function fetchSuppliers() {
     try {
-      // Use FormData to send both text and image together
-      const formData = new FormData();
-
-      // Add all text fields
-      Object.keys(form).forEach(key => {
-        formData.append(key, form[key]);
-      });
-
-      // Add image if selected
-      if (imageFile) {
-        formData.append('image', imageFile);
-      }
-
-      if (editId) {
-        await axios.put(
-          `http://localhost:5000/api/listings/${editId}`,
-          formData,
-          { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
-        );
-      } else {
-        await axios.post(
-          'http://localhost:5000/api/listings',
-          formData,
-          { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
-        );
-      }
-
-      setForm(EMPTY_FORM);
-      setEditId(null);
-      setShowForm(false);
-      setImageFile(null);
-      setImagePreview(null);
-      fetchMyListings();
-    } catch (err) {
-      alert(err.response?.data?.message || 'Error saving listing');
-    }
-    setLoading(false);
+      const res = await API.get('/admin/suppliers');
+      setSuppliers(res.data);
+    } catch (err) { console.error(err); }
   }
 
-  function startEdit(listing) {
-    setForm({ ...listing });
-    setEditId(listing._id);
-    setShowForm(true);
-    setImagePreview(
-      listing.image
-        ? `http://localhost:5000/uploads/${listing.image}`
-        : null
-    );
-    window.scrollTo(0, 0);
+  async function fetchCustomers() {
+    try {
+      const res = await API.get('/admin/customers');
+      setCustomers(res.data);
+    } catch (err) { console.error(err); }
+  }
+
+  async function fetchListings() {
+    try {
+      const res = await API.get('/admin/listings');
+      setListings(res.data);
+    } catch (err) { console.error(err); }
+  }
+
+  async function fetchRequests() {
+    try {
+      const res = await API.get('/admin/requests');
+      setRequests(res.data);
+    } catch (err) { console.error(err); }
+  }
+
+  async function approveSupplier(id) {
+    try {
+      await API.put(`/admin/suppliers/${id}/approve`);
+      fetchSuppliers();
+      fetchStats();
+    } catch (err) { alert('Error approving supplier'); }
+  }
+
+  async function rejectSupplier(id) {
+    try {
+      await API.put(`/admin/suppliers/${id}/reject`);
+      fetchSuppliers();
+    } catch (err) { alert('Error rejecting supplier'); }
+  }
+
+  async function deleteUser(id) {
+    if (!window.confirm('Delete this user?')) return;
+    try {
+      await API.delete(`/admin/users/${id}`);
+      fetchCustomers();
+      fetchSuppliers();
+    } catch (err) { alert('Error deleting user'); }
   }
 
   async function deleteListing(id) {
     if (!window.confirm('Delete this listing?')) return;
     try {
-      await axios.delete(
-        `http://localhost:5000/api/listings/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      fetchMyListings();
-    } catch (err) {
-      alert('Could not delete listing');
-    }
+      await API.delete(`/admin/listings/${id}`);
+      fetchListings();
+    } catch (err) { alert('Error deleting listing'); }
   }
 
-  if (user.role !== 'supplier') {
-    return (
-      <p style={{ marginTop: 30, textAlign: 'center' }}>
-        This page is for suppliers only.
-      </p>
-    );
-  }
+  const tabStyle = (name) => ({
+    padding: '10px 16px',
+    border: 'none',
+    borderRadius: 8,
+    cursor: 'pointer',
+    fontWeight: 600,
+    fontSize: 13,
+    background: tab === name ? '#1a73e8' : '#f0f0f0',
+    color: tab === name ? 'white' : '#333',
+    marginRight: 8,
+    marginBottom: 8
+  });
 
   return (
     <div>
-      <h2 style={{ marginBottom: 4 }}>My Listings</h2>
+      <h2 style={{ marginBottom: 4 }}>🛡️ Admin Panel</h2>
       <p style={{ color: '#666', fontSize: 14, marginBottom: 16 }}>
-        Manage your water and gas listings
+        Manage all users suppliers and listings
       </p>
 
-      <button className="btn btn-blue" onClick={() => {
-        setForm(EMPTY_FORM);
-        setEditId(null);
-        setImageFile(null);
-        setImagePreview(null);
-        setShowForm(!showForm);
-      }}>
-        {showForm ? 'Cancel' : '+ Add new listing'}
-      </button>
+      <div style={{ marginBottom: 20, flexWrap: 'wrap', display: 'flex' }}>
+        <button style={tabStyle('stats')}
+                onClick={() => setTab('stats')}>
+          📊 Stats
+        </button>
+        <button style={tabStyle('suppliers')}
+                onClick={() => setTab('suppliers')}>
+          🏪 Suppliers
+        </button>
+        <button style={tabStyle('customers')}
+                onClick={() => setTab('customers')}>
+          👥 Customers
+        </button>
+        <button style={tabStyle('listings')}
+                onClick={() => setTab('listings')}>
+          📋 Listings
+        </button>
+        <button style={tabStyle('requests')}
+                onClick={() => setTab('requests')}>
+          🚨 Requests
+        </button>
+      </div>
 
-      {showForm && (
-        <div className="card" style={{ marginTop: 16 }}>
-          <h3 style={{ marginBottom: 12 }}>
-            {editId ? 'Edit listing' : 'New listing'}
-          </h3>
-          <form onSubmit={handleSubmit}>
-
-            <label>Category</label>
-            <select name="category" value={form.category} onChange={handleChange}>
-              <option value="water">💧 Water</option>
-              <option value="gas">🔥 Gas</option>
-            </select>
-
-            <label>Service type</label>
-            <select name="serviceType" value={form.serviceType} onChange={handleChange}>
-              <option value="refill">Refill</option>
-              <option value="buy">Buy new</option>
-            </select>
-
-            <label>Product description</label>
-            <input name="productType" value={form.productType}
-                   onChange={handleChange}
-                   placeholder="e.g. 20L drinking water, 6kg gas cylinder"
-                   required />
-
-            <label>Price (KSh)</label>
-            <input name="price" type="number" value={form.price}
-                   onChange={handleChange} required />
-
-            <label>Your location</label>
-            <input name="location" value={form.location}
-                   onChange={handleChange}
-                   placeholder="e.g. Nairobi Town" required />
-
-            <label>Phone number</label>
-            <input name="phone" value={form.phone}
-                   onChange={handleChange}
-                   placeholder="e.g. 0712345678" required />
-
-            <label>WhatsApp number (optional)</label>
-            <input name="whatsapp" value={form.whatsapp}
-                   onChange={handleChange}
-                   placeholder="e.g. 254712345678" />
-
-            <label>Delivery time (if available)</label>
-            <input name="deliveryTime" value={form.deliveryTime}
-                   onChange={handleChange}
-                   placeholder="e.g. Within 2 hours" />
-
-            <label>Status</label>
-            <select name="status" value={form.status} onChange={handleChange}>
-              <option value="available">Available</option>
-              <option value="out_of_stock">Out of stock</option>
-            </select>
-
-            <label style={{ display: 'flex', alignItems: 'center',
-                            gap: 8, marginBottom: 12 }}>
-              <input type="checkbox" name="deliveryAvailable"
-                     checked={form.deliveryAvailable}
-                     onChange={handleChange}
-                     style={{ width: 'auto', marginBottom: 0 }} />
-              Delivery available
-            </label>
-
-            {/* Image upload */}
-            <label>Product Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              style={{ marginBottom: 12 }}
-            />
-
-            {/* Image preview */}
-            {imagePreview && (
-              <div style={{ marginBottom: 12 }}>
-                <p style={{ fontSize: 13, color: '#666', marginBottom: 6 }}>
-                  Image preview:
-                </p>
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  style={{
-                    width: '100%',
-                    height: 200,
-                    objectFit: 'cover',
-                    borderRadius: 8,
-                    border: '1px solid #ddd'
-                  }}
-                />
-              </div>
-            )}
-
-            <button className="btn btn-blue" type="submit" disabled={loading}>
-              {loading ? 'Saving...' : editId ? 'Save changes' : 'Post listing'}
-            </button>
-          </form>
+      {tab === 'stats' && (
+        <div>
+          <div className="card" style={{ background: '#e3f2fd' }}>
+            <h3>👥 Total Customers</h3>
+            <p style={{ fontSize: 32, fontWeight: 700, color: '#1a73e8' }}>
+              {stats.totalUsers || 0}
+            </p>
+          </div>
+          <div className="card" style={{ background: '#fff3e0' }}>
+            <h3>🏪 Total Suppliers</h3>
+            <p style={{ fontSize: 32, fontWeight: 700, color: '#f57c00' }}>
+              {stats.totalSuppliers || 0}
+            </p>
+          </div>
+          <div className="card" style={{ background: '#fff8e1' }}>
+            <h3>⏳ Pending Approvals</h3>
+            <p style={{ fontSize: 32, fontWeight: 700, color: '#f9a825' }}>
+              {stats.pendingSuppliers || 0}
+            </p>
+          </div>
+          <div className="card" style={{ background: '#e8f5e9' }}>
+            <h3>📋 Total Listings</h3>
+            <p style={{ fontSize: 32, fontWeight: 700, color: '#2e7d32' }}>
+              {stats.totalListings || 0}
+            </p>
+          </div>
+          <div className="card" style={{ background: '#fce4ec' }}>
+            <h3>🚨 Total Requests</h3>
+            <p style={{ fontSize: 32, fontWeight: 700, color: '#c62828' }}>
+              {stats.totalRequests || 0}
+            </p>
+          </div>
         </div>
       )}
 
-      {listings.length === 0 ? (
-        <p style={{ color: '#888', marginTop: 24, textAlign: 'center' }}>
-          You have no listings yet. Add one above!
-        </p>
-      ) : (
-        listings.map(listing => (
-          <div className="card" key={listing._id}>
-
-            {/* Listing image */}
-            {listing.image ? (
-              <img
-                src={`http://localhost:5000/uploads/${listing.image}`}
-                alt={listing.productType}
-                style={{
-                  width: '100%',
-                  height: 180,
-                  objectFit: 'cover',
-                  borderRadius: 8,
-                  marginBottom: 12
-                }}
-              />
-            ) : (
-              <div style={{
-                width: '100%', height: 120,
-                background: listing.category === 'water' ? '#e3f2fd' : '#fff3e0',
-                borderRadius: 8, marginBottom: 12,
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: 48
-              }}>
-                {listing.category === 'water' ? '💧' : '🔥'}
+      {tab === 'suppliers' && (
+        <div>
+          <h3 style={{ marginBottom: 12 }}>All Suppliers</h3>
+          {suppliers.length === 0 ? (
+            <p style={{ color: '#888' }}>No suppliers yet</p>
+          ) : (
+            suppliers.map(s => (
+              <div className="card" key={s._id}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <h3>{s.name}</h3>
+                  <span className={`badge ${
+                    s.status === 'approved' ? 'badge-green' :
+                    s.status === 'rejected' ? 'badge-gray' : 'badge-orange'
+                  }`}>
+                    {s.status}
+                  </span>
+                </div>
+                <p>📧 {s.email}</p>
+                <p>📞 {s.phone}</p>
+                <p>📍 {s.location}</p>
+                <p style={{ fontSize: 12, color: '#aaa' }}>
+                  Joined: {new Date(s.createdAt).toLocaleDateString()}
+                </p>
+                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                  {s.status !== 'approved' && (
+                    <button className="btn btn-green"
+                            onClick={() => approveSupplier(s._id)}
+                            style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
+                      ✅ Approve
+                    </button>
+                  )}
+                  {s.status !== 'rejected' && (
+                    <button className="btn btn-orange"
+                            onClick={() => rejectSupplier(s._id)}
+                            style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
+                      ❌ Reject
+                    </button>
+                  )}
+                  <button className="btn btn-red"
+                          onClick={() => deleteUser(s._id)}
+                          style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
+                    🗑️ Delete
+                  </button>
+                </div>
               </div>
-            )}
+            ))
+          )}
+        </div>
+      )}
 
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <h3>{listing.productType}</h3>
-            </div>
-            <span className={`badge badge-${listing.category === 'water'
-              ? 'blue' : 'orange'}`}>
-              {listing.category}
-            </span>
-            <span className="badge badge-gray">{listing.serviceType}</span>
-            <p>📍 {listing.location}</p>
-            <p><strong>KSh {listing.price?.toLocaleString()}</strong></p>
-            <p style={{ color: listing.status === 'available'
-              ? '#2e7d32' : '#c62828', fontSize: 13 }}>
-              {listing.status === 'available'
-                ? '✅ Available' : '❌ Out of stock'}
-            </p>
-            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-              <button className="btn btn-outline"
-                      onClick={() => startEdit(listing)}
-                      style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
-                ✏️ Edit
-              </button>
-              <button className="btn btn-red"
-                      onClick={() => deleteListing(listing._id)}
-                      style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
-                🗑️ Delete
-              </button>
-            </div>
-          </div>
-        ))
+      {tab === 'customers' && (
+        <div>
+          <h3 style={{ marginBottom: 12 }}>All Customers</h3>
+          {customers.length === 0 ? (
+            <p style={{ color: '#888' }}>No customers yet</p>
+          ) : (
+            customers.map(c => (
+              <div className="card" key={c._id}>
+                <h3>{c.name}</h3>
+                <p>📧 {c.email}</p>
+                <p>📞 {c.phone}</p>
+                <p>📍 {c.location}</p>
+                <p style={{ fontSize: 12, color: '#aaa' }}>
+                  Joined: {new Date(c.createdAt).toLocaleDateString()}
+                </p>
+                <button className="btn btn-red"
+                        onClick={() => deleteUser(c._id)}
+                        style={{ padding: '8px 0', marginTop: 8 }}>
+                  🗑️ Delete Customer
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {tab === 'listings' && (
+        <div>
+          <h3 style={{ marginBottom: 12 }}>All Listings</h3>
+          {listings.length === 0 ? (
+            <p style={{ color: '#888' }}>No listings yet</p>
+          ) : (
+            listings.map(l => (
+              <div className="card" key={l._id}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <h3>{l.productType}</h3>
+                  <span>{l.category === 'water' ? '💧' : '🔥'}</span>
+                </div>
+                <span className={`badge badge-${l.category === 'water'
+                  ? 'blue' : 'orange'}`}>
+                  {l.category}
+                </span>
+                <span className="badge badge-gray">{l.serviceType}</span>
+                <p>📍 {l.location}</p>
+                <p><strong>KSh {l.price?.toLocaleString()}</strong></p>
+                {l.supplierId && (
+                  <p style={{ fontSize: 13, color: '#777' }}>
+                    By {l.supplierId.name} · {l.supplierId.phone}
+                  </p>
+                )}
+                <button className="btn btn-red"
+                        onClick={() => deleteListing(l._id)}
+                        style={{ padding: '8px 0', marginTop: 8 }}>
+                  🗑️ Delete Listing
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {tab === 'requests' && (
+        <div>
+          <h3 style={{ marginBottom: 12 }}>All Urgent Requests</h3>
+          {requests.length === 0 ? (
+            <p style={{ color: '#888' }}>No requests yet</p>
+          ) : (
+            requests.map(r => (
+              <div className="card" key={r._id}>
+                <span className={`badge badge-${r.category === 'water'
+                  ? 'blue' : 'orange'}`}>
+                  {r.category === 'gas' ? '🔥' : '💧'} {r.category}
+                </span>
+                <p style={{ marginTop: 8, fontWeight: 500 }}>
+                  {r.requestText}
+                </p>
+                <p>📍 {r.location}</p>
+                {r.userId && (
+                  <p style={{ fontSize: 13, color: '#777' }}>
+                    By {r.userId.name} · 📞 {r.userId.phone}
+                  </p>
+                )}
+                <p style={{ fontSize: 12, color: '#aaa', marginTop: 4 }}>
+                  {new Date(r.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
       )}
     </div>
   );
 }
 
-export default Dashboard;
+export default AdminPanel;
