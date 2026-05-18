@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api';
 
+const BASE_URL = 'https://homefil-backed.onrender.com';
+
 function Home() {
   const [listings, setListings] = useState([]);
   const [filters, setFilters] = useState({
@@ -20,7 +22,6 @@ function Home() {
       if (filters.category)    params.append('category', filters.category);
       if (filters.serviceType) params.append('serviceType', filters.serviceType);
       if (filters.location)    params.append('location', filters.location);
-
       const res = await API.get(`/listings?${params.toString()}`);
       setListings(res.data);
     } catch (err) {
@@ -40,7 +41,6 @@ function Home() {
         Browse refill services and suppliers in your area
       </p>
 
-      {/* Filters */}
       <div className="filter-bar">
         <select name="category" value={filters.category} onChange={handleFilter}>
           <option value="">All categories</option>
@@ -54,7 +54,6 @@ function Home() {
         </select>
       </div>
 
-      {/* Search bar */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         <input
           name="location"
@@ -71,12 +70,10 @@ function Home() {
         </button>
       </div>
 
-      {/* Disclaimer */}
       <div className="disclaimer">
         🚫 HomeFil does not handle payments. You pay suppliers directly upon delivery.
       </div>
 
-      {/* Listings */}
       {loading ? (
         <p style={{ textAlign: 'center', color: '#888' }}>
           Loading listings...
@@ -93,23 +90,21 @@ function Home() {
             style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="card">
 
-              {/* Listing image */}
               {listing.image ? (
                 <img
-                  src={`https://homefil-backed.onrender.com/uploads/${listing.image}`}
+                  src={`${BASE_URL}/uploads/${listing.image}`}
                   alt={listing.productType}
                   style={{
-                    width: '100%',
-                    height: 180,
-                    objectFit: 'cover',
-                    borderRadius: 8,
+                    width: '100%', height: 180,
+                    objectFit: 'cover', borderRadius: 8,
                     marginBottom: 12
                   }}
                 />
               ) : (
                 <div style={{
                   width: '100%', height: 120,
-                  background: listing.category === 'water' ? '#e3f2fd' : '#fff3e0',
+                  background: listing.category === 'water'
+                    ? '#e3f2fd' : '#fff3e0',
                   borderRadius: 8, marginBottom: 12,
                   display: 'flex', alignItems: 'center',
                   justifyContent: 'center', fontSize: 48

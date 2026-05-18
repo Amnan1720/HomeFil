@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../api';
 
+const BASE_URL = 'https://homefil-backed.onrender.com';
+
 function ListingDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,7 +24,9 @@ function ListingDetails() {
   }, [id]);
 
   function saveContact() {
-    const contacts = JSON.parse(localStorage.getItem('savedContacts') || '[]');
+    const contacts = JSON.parse(
+      localStorage.getItem('savedContacts') || '[]'
+    );
     if (!contacts.find(c => c._id === listing._id)) {
       contacts.push({
         _id: listing._id,
@@ -38,7 +42,7 @@ function ListingDetails() {
   }
 
   if (!listing) return (
-    <p style={{ padding: 20 }}>Loading...</p>
+    <p style={{ padding: 20, textAlign: 'center' }}>Loading...</p>
   );
 
   return (
@@ -51,23 +55,21 @@ function ListingDetails() {
 
       <div className="card">
 
-        {/* Product image */}
         {listing.image ? (
           <img
-            src={`https://homefil-backed.onrender.com/uploads/${listing.image}`}
+            src={`${BASE_URL}/uploads/${listing.image}`}
             alt={listing.productType}
             style={{
-              width: '100%',
-              height: 220,
-              objectFit: 'cover',
-              borderRadius: 8,
+              width: '100%', height: 220,
+              objectFit: 'cover', borderRadius: 8,
               marginBottom: 16
             }}
           />
         ) : (
           <div style={{
             width: '100%', height: 160,
-            background: listing.category === 'water' ? '#e3f2fd' : '#fff3e0',
+            background: listing.category === 'water'
+              ? '#e3f2fd' : '#fff3e0',
             borderRadius: 8, marginBottom: 16,
             display: 'flex', alignItems: 'center',
             justifyContent: 'center', fontSize: 64
@@ -101,7 +103,8 @@ function ListingDetails() {
 
         <div className="pay-tag">💵 Pay on Delivery</div>
         <div className="disclaimer" style={{ marginTop: 8 }}>
-          HomeFil does not handle payments. You pay this supplier directly.
+          HomeFil does not handle payments.
+          You pay this supplier directly.
         </div>
 
         <a href={`tel:${listing.phone}`}
