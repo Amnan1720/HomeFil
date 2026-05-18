@@ -15,10 +15,11 @@ function App() {
     <Router>
       <Routes>
 
-        {/* Admin login has NO navbar — completely separate */}
+        {/* These pages have NO navbar — full screen design */}
+        <Route path="/auth"        element={<Auth />} />
         <Route path="/admin-login" element={<AdminLogin />} />
 
-        {/* All other pages have the navbar */}
+        {/* These pages have the navbar */}
         <Route path="/*" element={
           <>
             <Navbar />
@@ -27,7 +28,6 @@ function App() {
                 <Route path="/"            element={<Home />} />
                 <Route path="/listing/:id" element={<ListingDetails />} />
                 <Route path="/dashboard"   element={<Dashboard />} />
-                <Route path="/auth"        element={<Auth />} />
                 <Route path="/requests"    element={<Requests />} />
                 <Route path="/admin"       element={<AdminPanel />} />
               </Routes>
