@@ -114,7 +114,7 @@ function Auth() {
           </button>
         )}
 
-        {/* Logo circle */}
+        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <div style={{
             width: 90, height: 90,
@@ -171,6 +171,7 @@ function Auth() {
           {/* Register only fields */}
           {!isLogin && (
             <>
+              {/* Full Name */}
               <div style={{ position: 'relative', marginBottom: 12 }}>
                 <span style={{ position: 'absolute', left: 14,
                                top: '50%', transform: 'translateY(-50%)',
@@ -181,13 +182,16 @@ function Auth() {
                   value={form.name}
                   onChange={handleChange}
                   required
-                  style={{ paddingLeft: 44, border: '1.5px solid #e0e0e0',
-                           borderRadius: 12, height: 52, fontSize: 15,
-                           width: '100%', boxSizing: 'border-box',
+                  style={{ paddingLeft: 44,
+                           border: '1.5px solid #e0e0e0',
+                           borderRadius: 12, height: 52,
+                           fontSize: 15, width: '100%',
+                           boxSizing: 'border-box',
                            marginBottom: 0, outline: 'none' }}
                 />
               </div>
 
+              {/* Phone */}
               <div style={{ position: 'relative', marginBottom: 12 }}>
                 <span style={{ position: 'absolute', left: 14,
                                top: '50%', transform: 'translateY(-50%)',
@@ -198,9 +202,11 @@ function Auth() {
                   value={form.phone}
                   onChange={handleChange}
                   required
-                  style={{ paddingLeft: 44, border: '1.5px solid #e0e0e0',
-                           borderRadius: 12, height: 52, fontSize: 15,
-                           width: '100%', boxSizing: 'border-box',
+                  style={{ paddingLeft: 44,
+                           border: '1.5px solid #e0e0e0',
+                           borderRadius: 12, height: 52,
+                           fontSize: 15, width: '100%',
+                           boxSizing: 'border-box',
                            marginBottom: 0, outline: 'none' }}
                 />
               </div>
@@ -221,9 +227,11 @@ function Auth() {
               value={form.email}
               onChange={handleChange}
               required
-              style={{ paddingLeft: 44, border: '1.5px solid #e0e0e0',
-                       borderRadius: 12, height: 52, fontSize: 15,
-                       width: '100%', boxSizing: 'border-box',
+              style={{ paddingLeft: 44,
+                       border: '1.5px solid #e0e0e0',
+                       borderRadius: 12, height: 52,
+                       fontSize: 15, width: '100%',
+                       boxSizing: 'border-box',
                        marginBottom: 0, outline: 'none' }}
             />
           </div>
@@ -242,8 +250,9 @@ function Auth() {
               required
               style={{ paddingLeft: 44, paddingRight: 44,
                        border: '1.5px solid #e0e0e0',
-                       borderRadius: 12, height: 52, fontSize: 15,
-                       width: '100%', boxSizing: 'border-box',
+                       borderRadius: 12, height: 52,
+                       fontSize: 15, width: '100%',
+                       boxSizing: 'border-box',
                        marginBottom: 0, outline: 'none' }}
             />
             <button type="button"
@@ -251,7 +260,8 @@ function Auth() {
               style={{ position: 'absolute', right: 14,
                        top: '50%', transform: 'translateY(-50%)',
                        background: 'none', border: 'none',
-                       cursor: 'pointer', fontSize: 16, color: '#aaa' }}>
+                       cursor: 'pointer', fontSize: 16,
+                       color: '#aaa' }}>
               {showPassword ? '🙈' : '👁️'}
             </button>
           </div>
@@ -271,8 +281,9 @@ function Auth() {
                 required
                 style={{ paddingLeft: 44, paddingRight: 44,
                          border: '1.5px solid #e0e0e0',
-                         borderRadius: 12, height: 52, fontSize: 15,
-                         width: '100%', boxSizing: 'border-box',
+                         borderRadius: 12, height: 52,
+                         fontSize: 15, width: '100%',
+                         boxSizing: 'border-box',
                          marginBottom: 0, outline: 'none' }}
               />
               <button type="button"
@@ -280,7 +291,8 @@ function Auth() {
                 style={{ position: 'absolute', right: 14,
                          top: '50%', transform: 'translateY(-50%)',
                          background: 'none', border: 'none',
-                         cursor: 'pointer', fontSize: 16, color: '#aaa' }}>
+                         cursor: 'pointer', fontSize: 16,
+                         color: '#aaa' }}>
                 {showConfirmPassword ? '🙈' : '👁️'}
               </button>
             </div>
@@ -288,7 +300,8 @@ function Auth() {
 
           {/* Remember me and Forgot password */}
           {isLogin && (
-            <div style={{ display: 'flex', justifyContent: 'space-between',
+            <div style={{ display: 'flex',
+                          justifyContent: 'space-between',
                           alignItems: 'center', marginBottom: 20 }}>
               <label style={{ display: 'flex', alignItems: 'center',
                               gap: 8, fontSize: 14, color: '#555',
@@ -313,69 +326,87 @@ function Auth() {
                 I want to join as
               </p>
               <div style={{ display: 'grid',
-                            gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                            gridTemplateColumns: '1fr 1fr',
+                            gap: 12 }}>
+
+                {/* Customer */}
                 <div onClick={() => setRole('customer')}
                   style={{
                     border: role === 'customer'
-                      ? '2px solid #1a73e8' : '1.5px solid #e0e0e0',
+                      ? '2px solid #1a73e8'
+                      : '1.5px solid #e0e0e0',
                     borderRadius: 12, padding: '16px 12px',
                     textAlign: 'center', cursor: 'pointer',
-                    background: role === 'customer' ? '#f0f7ff' : 'white',
+                    background: role === 'customer'
+                      ? '#f0f7ff' : 'white',
                     position: 'relative'
                   }}>
                   {role === 'customer' && (
                     <div style={{
                       position: 'absolute', top: 8, right: 8,
-                      width: 20, height: 20, background: '#1a73e8',
+                      width: 20, height: 20,
+                      background: '#1a73e8',
                       borderRadius: '50%', display: 'flex',
-                      alignItems: 'center', justifyContent: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       color: 'white', fontSize: 11
                     }}>✓</div>
                   )}
                   <div style={{
-                    width: 50, height: 50, background: '#e3f2fd',
+                    width: 50, height: 50,
+                    background: '#e3f2fd',
                     borderRadius: '50%', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     margin: '0 auto 8px', fontSize: 22
                   }}>👤</div>
                   <p style={{ fontWeight: 700, color: '#1a73e8',
                               fontSize: 14, margin: '0 0 4px' }}>
                     Customer
                   </p>
-                  <p style={{ fontSize: 11, color: '#888', margin: 0 }}>
+                  <p style={{ fontSize: 11, color: '#888',
+                              margin: 0 }}>
                     Order water and gas delivered to you
                   </p>
                 </div>
 
+                {/* Supplier */}
                 <div onClick={() => setRole('supplier')}
                   style={{
                     border: role === 'supplier'
-                      ? '2px solid #f57c00' : '1.5px solid #e0e0e0',
+                      ? '2px solid #f57c00'
+                      : '1.5px solid #e0e0e0',
                     borderRadius: 12, padding: '16px 12px',
                     textAlign: 'center', cursor: 'pointer',
-                    background: role === 'supplier' ? '#fff8f0' : 'white',
+                    background: role === 'supplier'
+                      ? '#fff8f0' : 'white',
                     position: 'relative'
                   }}>
                   {role === 'supplier' && (
                     <div style={{
                       position: 'absolute', top: 8, right: 8,
-                      width: 20, height: 20, background: '#f57c00',
+                      width: 20, height: 20,
+                      background: '#f57c00',
                       borderRadius: '50%', display: 'flex',
-                      alignItems: 'center', justifyContent: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       color: 'white', fontSize: 11
                     }}>✓</div>
                   )}
                   <div style={{
-                    width: 50, height: 50, background: '#fff3e0',
+                    width: 50, height: 50,
+                    background: '#fff3e0',
                     borderRadius: '50%', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     margin: '0 auto 8px', fontSize: 22
                   }}>🏪</div>
                   <p style={{ fontWeight: 700, color: '#f57c00',
                               fontSize: 14, margin: '0 0 4px' }}>
                     Supplier
                   </p>
-                  <p style={{ fontSize: 11, color: '#888', margin: 0 }}>
+                  <p style={{ fontSize: 11, color: '#888',
+                              margin: 0 }}>
                     List your products and reach more customers
                   </p>
                 </div>
@@ -383,22 +414,33 @@ function Auth() {
             </div>
           )}
 
-          {/* Terms */}
+          {/* Terms and conditions */}
           {!isLogin && (
-            <label style={{ display: 'flex', alignItems: 'flex-start',
-                            gap: 8, marginBottom: 16, cursor: 'pointer' }}>
+            <label style={{ display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: 8, marginBottom: 16,
+                            cursor: 'pointer' }}>
               <input type="checkbox"
                      checked={agreedToTerms}
                      onChange={e => setAgreedToTerms(e.target.checked)}
                      style={{ width: 'auto', marginBottom: 0,
-                              marginTop: 2, accentColor: '#1a73e8' }} />
+                              marginTop: 2,
+                              accentColor: '#1a73e8' }} />
               <span style={{ fontSize: 13, color: '#555' }}>
                 I agree to the{' '}
-                <span style={{ color: '#1a73e8', fontWeight: 600 }}>
+                <span
+                  onClick={() => window.open('/terms', '_blank')}
+                  style={{ color: '#1a73e8', fontWeight: 600,
+                           cursor: 'pointer',
+                           textDecoration: 'underline' }}>
                   Terms & Conditions
                 </span>
                 {' '}and{' '}
-                <span style={{ color: '#1a73e8', fontWeight: 600 }}>
+                <span
+                  onClick={() => window.open('/privacy', '_blank')}
+                  style={{ color: '#1a73e8', fontWeight: 600,
+                           cursor: 'pointer',
+                           textDecoration: 'underline' }}>
                   Privacy Policy
                 </span>
               </span>
@@ -428,17 +470,20 @@ function Auth() {
           {/* Divider */}
           <div style={{ display: 'flex', alignItems: 'center',
                         gap: 12, marginBottom: 16 }}>
-            <div style={{ flex: 1, height: 1, background: '#e0e0e0' }} />
+            <div style={{ flex: 1, height: 1,
+                          background: '#e0e0e0' }} />
             <span style={{ color: '#aaa', fontSize: 13 }}>
               {isLogin ? 'or login with' : 'or sign up with'}
             </span>
-            <div style={{ flex: 1, height: 1, background: '#e0e0e0' }} />
+            <div style={{ flex: 1, height: 1,
+                          background: '#e0e0e0' }} />
           </div>
 
           {/* Social buttons */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: isLogin ? '1fr 1fr 1fr' : '1fr 1fr',
+            gridTemplateColumns: isLogin
+              ? '1fr 1fr 1fr' : '1fr 1fr',
             gap: 10,
             marginBottom: 20
           }}>
@@ -447,8 +492,10 @@ function Auth() {
                        border: '1.5px solid #e0e0e0',
                        borderRadius: 10, background: 'white',
                        cursor: 'pointer', display: 'flex',
-                       alignItems: 'center', justifyContent: 'center',
-                       gap: 6, fontSize: 13, fontWeight: 500 }}>
+                       alignItems: 'center',
+                       justifyContent: 'center',
+                       gap: 6, fontSize: 13,
+                       fontWeight: 500 }}>
               <span style={{ fontWeight: 700, color: '#4285f4',
                              fontSize: 16 }}>G</span>
               <span style={{ color: '#555' }}>Google</span>
@@ -458,8 +505,10 @@ function Auth() {
                        border: '1.5px solid #e0e0e0',
                        borderRadius: 10, background: 'white',
                        cursor: 'pointer', display: 'flex',
-                       alignItems: 'center', justifyContent: 'center',
-                       gap: 6, fontSize: 13, fontWeight: 500 }}>
+                       alignItems: 'center',
+                       justifyContent: 'center',
+                       gap: 6, fontSize: 13,
+                       fontWeight: 500 }}>
               <span style={{ fontWeight: 700, color: '#1877f2',
                              fontSize: 16 }}>f</span>
               <span style={{ color: '#555' }}>Facebook</span>
@@ -470,15 +519,17 @@ function Auth() {
                          border: '1.5px solid #e0e0e0',
                          borderRadius: 10, background: 'white',
                          cursor: 'pointer', display: 'flex',
-                         alignItems: 'center', justifyContent: 'center',
-                         gap: 6, fontSize: 13, fontWeight: 500 }}>
+                         alignItems: 'center',
+                         justifyContent: 'center',
+                         gap: 6, fontSize: 13,
+                         fontWeight: 500 }}>
                 <span style={{ fontSize: 16 }}>📱</span>
                 <span style={{ color: '#555' }}>Phone</span>
               </button>
             )}
           </div>
 
-          {/* Toggle */}
+          {/* Toggle login/register */}
           <p style={{ textAlign: 'center', fontSize: 14,
                       color: '#555', margin: 0 }}>
             {isLogin
@@ -503,13 +554,13 @@ function Auth() {
             { icon: '🚚', title: 'Fast', sub: 'Delivery' },
             { icon: '✅', title: 'Quality', sub: 'Guaranteed' }
           ].map((item, i) => (
-            <div key={i} style={{ textAlign: 'center', color: 'white' }}>
+            <div key={i} style={{ textAlign: 'center',
+                                  color: 'white' }}>
               <div style={{
                 width: 44, height: 44,
                 border: '2px solid rgba(255,255,255,0.5)',
-                borderRadius: '50%',
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'center',
+                borderRadius: '50%', display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
                 margin: '0 auto 6px', fontSize: 20
               }}>
                 {item.icon}
