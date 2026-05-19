@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api';
-import logo from '../logo.png';
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,7 +24,6 @@ function Auth() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-
     if (!isLogin && form.password !== form.confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -34,7 +32,6 @@ function Auth() {
       setError('Please agree to Terms & Conditions');
       return;
     }
-
     setLoading(true);
     try {
       if (isLogin) {
@@ -82,19 +79,19 @@ function Auth() {
       overflow: 'hidden'
     }}>
 
-      {/* Background circle decoration */}
+      {/* Background orange circle */}
       <div style={{
         position: 'absolute',
-        width: 300,
-        height: 300,
-        background: 'rgba(245, 124, 0, 0.6)',
+        width: 350,
+        height: 350,
+        background: 'rgba(245, 124, 0, 0.65)',
         borderRadius: '50%',
-        top: -50,
-        right: -80,
+        top: -80,
+        right: -100,
         zIndex: 0
       }} />
 
-      {/* Main card */}
+      {/* Main white card */}
       <div style={{
         background: 'white',
         borderRadius: 24,
@@ -106,32 +103,31 @@ function Auth() {
         boxShadow: '0 20px 60px rgba(0,0,0,0.2)'
       }}>
 
-        {/* Back button for register */}
+        {/* Back button */}
         {!isLogin && (
           <button onClick={() => setIsLogin(true)}
             style={{ background: 'none', border: 'none',
-                     cursor: 'pointer', fontSize: 20,
+                     cursor: 'pointer', fontSize: 22,
                      color: '#333', marginBottom: 8,
                      padding: 0 }}>
             ←
           </button>
         )}
 
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 20 }}>
+        {/* Logo circle */}
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <div style={{
             width: 90, height: 90,
-            background: 'white',
+            background: 'linear-gradient(135deg, #e3f2fd, #fff3e0)',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 12px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            overflow: 'hidden'
+            fontSize: 40
           }}>
-            <img src={logo} alt="HomeFil"
-                 style={{ width: 80, height: 80, objectFit: 'contain' }} />
+            🏠
           </div>
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>
             <span style={{ color: '#1a1a2e' }}>Home</span>
@@ -143,7 +139,7 @@ function Auth() {
         </div>
 
         {/* Title */}
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <h2 style={{ fontSize: 22, fontWeight: 700,
                        color: '#1a1a2e', margin: '0 0 4px' }}>
             {isLogin ? 'Welcome back! 👋' : 'Create your account'}
@@ -155,7 +151,7 @@ function Auth() {
           </p>
         </div>
 
-        {/* Error */}
+        {/* Error message */}
         {error && (
           <div style={{
             background: '#ffebee',
@@ -172,42 +168,40 @@ function Auth() {
 
         <form onSubmit={handleSubmit}>
 
-          {/* Register fields */}
+          {/* Register only fields */}
           {!isLogin && (
             <>
-              {/* Full Name */}
               <div style={{ position: 'relative', marginBottom: 12 }}>
                 <span style={{ position: 'absolute', left: 14,
                                top: '50%', transform: 'translateY(-50%)',
-                               fontSize: 18, color: '#aaa' }}>👤</span>
+                               fontSize: 16, color: '#aaa' }}>👤</span>
                 <input
                   name="name"
                   placeholder="Full Name"
                   value={form.name}
                   onChange={handleChange}
                   required
-                  style={{ paddingLeft: 44, border: '1px solid #e0e0e0',
-                           borderRadius: 12, height: 52,
-                           fontSize: 15, width: '100%',
-                           boxSizing: 'border-box', marginBottom: 0 }}
+                  style={{ paddingLeft: 44, border: '1.5px solid #e0e0e0',
+                           borderRadius: 12, height: 52, fontSize: 15,
+                           width: '100%', boxSizing: 'border-box',
+                           marginBottom: 0, outline: 'none' }}
                 />
               </div>
 
-              {/* Phone */}
               <div style={{ position: 'relative', marginBottom: 12 }}>
                 <span style={{ position: 'absolute', left: 14,
                                top: '50%', transform: 'translateY(-50%)',
-                               fontSize: 18, color: '#aaa' }}>📞</span>
+                               fontSize: 16, color: '#aaa' }}>📞</span>
                 <input
                   name="phone"
                   placeholder="Phone Number"
                   value={form.phone}
                   onChange={handleChange}
                   required
-                  style={{ paddingLeft: 44, border: '1px solid #e0e0e0',
-                           borderRadius: 12, height: 52,
-                           fontSize: 15, width: '100%',
-                           boxSizing: 'border-box', marginBottom: 0 }}
+                  style={{ paddingLeft: 44, border: '1.5px solid #e0e0e0',
+                           borderRadius: 12, height: 52, fontSize: 15,
+                           width: '100%', boxSizing: 'border-box',
+                           marginBottom: 0, outline: 'none' }}
                 />
               </div>
             </>
@@ -217,7 +211,7 @@ function Auth() {
           <div style={{ position: 'relative', marginBottom: 12 }}>
             <span style={{ position: 'absolute', left: 14,
                            top: '50%', transform: 'translateY(-50%)',
-                           fontSize: 18, color: '#aaa' }}>
+                           fontSize: 16, color: '#aaa' }}>
               {isLogin ? '👤' : '✉️'}
             </span>
             <input
@@ -227,10 +221,10 @@ function Auth() {
               value={form.email}
               onChange={handleChange}
               required
-              style={{ paddingLeft: 44, border: '1px solid #e0e0e0',
-                       borderRadius: 12, height: 52,
-                       fontSize: 15, width: '100%',
-                       boxSizing: 'border-box', marginBottom: 0 }}
+              style={{ paddingLeft: 44, border: '1.5px solid #e0e0e0',
+                       borderRadius: 12, height: 52, fontSize: 15,
+                       width: '100%', boxSizing: 'border-box',
+                       marginBottom: 0, outline: 'none' }}
             />
           </div>
 
@@ -238,7 +232,7 @@ function Auth() {
           <div style={{ position: 'relative', marginBottom: 12 }}>
             <span style={{ position: 'absolute', left: 14,
                            top: '50%', transform: 'translateY(-50%)',
-                           fontSize: 18, color: '#aaa' }}>🔒</span>
+                           fontSize: 16, color: '#aaa' }}>🔒</span>
             <input
               name="password"
               type={showPassword ? 'text' : 'password'}
@@ -247,17 +241,17 @@ function Auth() {
               onChange={handleChange}
               required
               style={{ paddingLeft: 44, paddingRight: 44,
-                       border: '1px solid #e0e0e0',
-                       borderRadius: 12, height: 52,
-                       fontSize: 15, width: '100%',
-                       boxSizing: 'border-box', marginBottom: 0 }}
+                       border: '1.5px solid #e0e0e0',
+                       borderRadius: 12, height: 52, fontSize: 15,
+                       width: '100%', boxSizing: 'border-box',
+                       marginBottom: 0, outline: 'none' }}
             />
             <button type="button"
               onClick={() => setShowPassword(!showPassword)}
               style={{ position: 'absolute', right: 14,
                        top: '50%', transform: 'translateY(-50%)',
                        background: 'none', border: 'none',
-                       cursor: 'pointer', fontSize: 18, color: '#aaa' }}>
+                       cursor: 'pointer', fontSize: 16, color: '#aaa' }}>
               {showPassword ? '🙈' : '👁️'}
             </button>
           </div>
@@ -267,7 +261,7 @@ function Auth() {
             <div style={{ position: 'relative', marginBottom: 12 }}>
               <span style={{ position: 'absolute', left: 14,
                              top: '50%', transform: 'translateY(-50%)',
-                             fontSize: 18, color: '#aaa' }}>🔒</span>
+                             fontSize: 16, color: '#aaa' }}>🔒</span>
               <input
                 name="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
@@ -276,23 +270,23 @@ function Auth() {
                 onChange={handleChange}
                 required
                 style={{ paddingLeft: 44, paddingRight: 44,
-                         border: '1px solid #e0e0e0',
-                         borderRadius: 12, height: 52,
-                         fontSize: 15, width: '100%',
-                         boxSizing: 'border-box', marginBottom: 0 }}
+                         border: '1.5px solid #e0e0e0',
+                         borderRadius: 12, height: 52, fontSize: 15,
+                         width: '100%', boxSizing: 'border-box',
+                         marginBottom: 0, outline: 'none' }}
               />
               <button type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 style={{ position: 'absolute', right: 14,
                          top: '50%', transform: 'translateY(-50%)',
                          background: 'none', border: 'none',
-                         cursor: 'pointer', fontSize: 18, color: '#aaa' }}>
+                         cursor: 'pointer', fontSize: 16, color: '#aaa' }}>
                 {showConfirmPassword ? '🙈' : '👁️'}
               </button>
             </div>
           )}
 
-          {/* Remember me / Forgot password — Login only */}
+          {/* Remember me and Forgot password */}
           {isLogin && (
             <div style={{ display: 'flex', justifyContent: 'space-between',
                           alignItems: 'center', marginBottom: 20 }}>
@@ -311,7 +305,7 @@ function Auth() {
             </div>
           )}
 
-          {/* Role selection — Register only */}
+          {/* Role selection */}
           {!isLogin && (
             <div style={{ marginBottom: 16 }}>
               <p style={{ fontWeight: 700, fontSize: 15,
@@ -320,16 +314,13 @@ function Auth() {
               </p>
               <div style={{ display: 'grid',
                             gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-
-                {/* Customer */}
                 <div onClick={() => setRole('customer')}
                   style={{
                     border: role === 'customer'
-                      ? '2px solid #1a73e8' : '1px solid #e0e0e0',
+                      ? '2px solid #1a73e8' : '1.5px solid #e0e0e0',
                     borderRadius: 12, padding: '16px 12px',
                     textAlign: 'center', cursor: 'pointer',
-                    background: role === 'customer'
-                      ? '#f0f7ff' : 'white',
+                    background: role === 'customer' ? '#f0f7ff' : 'white',
                     position: 'relative'
                   }}>
                   {role === 'customer' && (
@@ -338,14 +329,14 @@ function Auth() {
                       width: 20, height: 20, background: '#1a73e8',
                       borderRadius: '50%', display: 'flex',
                       alignItems: 'center', justifyContent: 'center',
-                      color: 'white', fontSize: 12
+                      color: 'white', fontSize: 11
                     }}>✓</div>
                   )}
                   <div style={{
                     width: 50, height: 50, background: '#e3f2fd',
                     borderRadius: '50%', display: 'flex',
                     alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 8px', fontSize: 24
+                    margin: '0 auto 8px', fontSize: 22
                   }}>👤</div>
                   <p style={{ fontWeight: 700, color: '#1a73e8',
                               fontSize: 14, margin: '0 0 4px' }}>
@@ -356,15 +347,13 @@ function Auth() {
                   </p>
                 </div>
 
-                {/* Supplier */}
                 <div onClick={() => setRole('supplier')}
                   style={{
                     border: role === 'supplier'
-                      ? '2px solid #f57c00' : '1px solid #e0e0e0',
+                      ? '2px solid #f57c00' : '1.5px solid #e0e0e0',
                     borderRadius: 12, padding: '16px 12px',
                     textAlign: 'center', cursor: 'pointer',
-                    background: role === 'supplier'
-                      ? '#fff8f0' : 'white',
+                    background: role === 'supplier' ? '#fff8f0' : 'white',
                     position: 'relative'
                   }}>
                   {role === 'supplier' && (
@@ -373,14 +362,14 @@ function Auth() {
                       width: 20, height: 20, background: '#f57c00',
                       borderRadius: '50%', display: 'flex',
                       alignItems: 'center', justifyContent: 'center',
-                      color: 'white', fontSize: 12
+                      color: 'white', fontSize: 11
                     }}>✓</div>
                   )}
                   <div style={{
                     width: 50, height: 50, background: '#fff3e0',
                     borderRadius: '50%', display: 'flex',
                     alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 8px', fontSize: 24
+                    margin: '0 auto 8px', fontSize: 22
                   }}>🏪</div>
                   <p style={{ fontWeight: 700, color: '#f57c00',
                               fontSize: 14, margin: '0 0 4px' }}>
@@ -394,7 +383,7 @@ function Auth() {
             </div>
           )}
 
-          {/* Terms and conditions — Register only */}
+          {/* Terms */}
           {!isLogin && (
             <label style={{ display: 'flex', alignItems: 'flex-start',
                             gap: 8, marginBottom: 16, cursor: 'pointer' }}>
@@ -424,7 +413,7 @@ function Auth() {
               width: '100%',
               padding: '15px',
               background: loading ? '#ccc'
-                : 'linear-gradient(135deg, #1a73e8, #f57c00)',
+                : 'linear-gradient(135deg, #1a73e8 0%, #f57c00 100%)',
               color: 'white',
               border: 'none',
               borderRadius: 12,
@@ -447,42 +436,49 @@ function Auth() {
           </div>
 
           {/* Social buttons */}
-          <div style={{ display: 'grid',
-                        gridTemplateColumns: isLogin
-                          ? '1fr 1fr 1fr' : '1fr 1fr',
-                        gap: 10, marginBottom: 20 }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isLogin ? '1fr 1fr 1fr' : '1fr 1fr',
+            gap: 10,
+            marginBottom: 20
+          }}>
             <button type="button"
-              style={{ padding: '10px 8px', border: '1px solid #e0e0e0',
+              style={{ padding: '10px 8px',
+                       border: '1.5px solid #e0e0e0',
                        borderRadius: 10, background: 'white',
                        cursor: 'pointer', display: 'flex',
                        alignItems: 'center', justifyContent: 'center',
                        gap: 6, fontSize: 13, fontWeight: 500 }}>
-              <span style={{ fontSize: 18 }}>G</span>
+              <span style={{ fontWeight: 700, color: '#4285f4',
+                             fontSize: 16 }}>G</span>
               <span style={{ color: '#555' }}>Google</span>
             </button>
             <button type="button"
-              style={{ padding: '10px 8px', border: '1px solid #e0e0e0',
+              style={{ padding: '10px 8px',
+                       border: '1.5px solid #e0e0e0',
                        borderRadius: 10, background: 'white',
                        cursor: 'pointer', display: 'flex',
                        alignItems: 'center', justifyContent: 'center',
                        gap: 6, fontSize: 13, fontWeight: 500 }}>
-              <span style={{ fontSize: 18, color: '#1877f2' }}>f</span>
+              <span style={{ fontWeight: 700, color: '#1877f2',
+                             fontSize: 16 }}>f</span>
               <span style={{ color: '#555' }}>Facebook</span>
             </button>
             {isLogin && (
               <button type="button"
-                style={{ padding: '10px 8px', border: '1px solid #e0e0e0',
+                style={{ padding: '10px 8px',
+                         border: '1.5px solid #e0e0e0',
                          borderRadius: 10, background: 'white',
                          cursor: 'pointer', display: 'flex',
                          alignItems: 'center', justifyContent: 'center',
                          gap: 6, fontSize: 13, fontWeight: 500 }}>
-                <span style={{ fontSize: 18 }}>📱</span>
+                <span style={{ fontSize: 16 }}>📱</span>
                 <span style={{ color: '#555' }}>Phone</span>
               </button>
             )}
           </div>
 
-          {/* Toggle login/register */}
+          {/* Toggle */}
           <p style={{ textAlign: 'center', fontSize: 14,
                       color: '#555', margin: 0 }}>
             {isLogin
@@ -498,7 +494,7 @@ function Auth() {
         </form>
       </div>
 
-      {/* Bottom badges — Login only */}
+      {/* Bottom badges */}
       {isLogin && (
         <div style={{ display: 'flex', gap: 24, marginTop: 24,
                       justifyContent: 'center' }}>
@@ -511,8 +507,9 @@ function Auth() {
               <div style={{
                 width: 44, height: 44,
                 border: '2px solid rgba(255,255,255,0.5)',
-                borderRadius: '50%', display: 'flex',
-                alignItems: 'center', justifyContent: 'center',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'center',
                 margin: '0 auto 6px', fontSize: 20
               }}>
                 {item.icon}
