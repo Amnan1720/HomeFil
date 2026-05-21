@@ -12,7 +12,8 @@ const ListingSchema = new mongoose.Schema({
   deliveryAvailable: { type: Boolean, default: false },
   deliveryTime:      { type: String },
   status:            { type: String, enum: ['available', 'out_of_stock'], default: 'available' },
-  image:             { type: String, default: null }, // Image file name stored here
+  images:            [{ type: String }], // Multiple images array
+  image:             { type: String, default: null }, // Keep for backward compatibility
   createdAt:         { type: Date, default: Date.now }
 });
 

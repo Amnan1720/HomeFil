@@ -9,11 +9,9 @@ router.get('/listings', async (req, res) => {
   try {
     const { category, serviceType, location } = req.query;
     const filter = {};
-
     if (category)    filter.category = category;
     if (serviceType) filter.serviceType = serviceType;
     if (location)    filter.location = new RegExp(location, 'i');
-
     const listings = await Listing.find(filter).sort({ createdAt: -1 });
     res.json(listings);
   } catch (err) {
@@ -21,20 +19,23 @@ router.get('/listings', async (req, res) => {
   }
 });
 
-// POST /api/listings — with image upload
-router.post('/listings', authMiddleware, upload.single('image'), async (req, res) => {
+// POST /api/listings — with multiple image upload
+router.post('/listings', authMiddleware, upload.array('images', 5), async (req, res) => {
   try {
     if (req.user.role !== 'supplier') {
       return res.status(403).json({ message: 'Only suppliers can create listings' });
     }
 
-    // If an image was uploaded save its filename
-    const imageFile = req.file ? req.file.filename : null;
+    // Get all uploaded image filenames
+    const imageFiles = req.files ? req.files.map(f => f.filename) : [];
+    const mainImage = imageFiles.length > 0 ? imageFiles[0] : null;
 
     const listing = new Listing({
       ...req.body,
       supplierId: req.user.id,
-      image: imageFile
+      images: imageFiles,
+      image: mainImage,
+      deliveryAvailable: req.body.deliveryAvailable === 'true'
     });
 
     await listing.save();
@@ -44,8 +45,8 @@ router.post('/listings', authMiddleware, upload.single('image'), async (req, res
   }
 });
 
-// PUT /api/listings/:id — with image upload
-router.put('/listings/:id', authMiddleware, upload.single('image'), async (req, res) => {
+// PUT /api/listings/:id — with multiple image upload
+router.put('/listings/:id', authMiddleware, upload.array('images', 5), async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id);
     if (!listing) return res.status(404).json({ message: 'Listing not found' });
@@ -54,12 +55,20 @@ router.put('/listings/:id', authMiddleware, upload.single('image'), async (req, 
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    // If a new image was uploaded use it otherwise keep the old one
-    const imageFile = req.file ? req.file.filename : listing.image;
+    // If new images uploaded use them otherwise keep old ones
+    const imageFiles = req.files && req.files.length > 0
+      ? req.files.map(f => f.filename)
+      : listing.images;
+    const mainImage = imageFiles.length > 0 ? imageFiles[0] : listing.image;
 
     const updated = await Listing.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, image: imageFile },
+      {
+        ...req.body,
+        images: imageFiles,
+        image: mainImage,
+        deliveryAvailable: req.body.deliveryAvailable === 'true'
+      },
       { new: true }
     );
     res.json(updated);

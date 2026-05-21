@@ -14,9 +14,10 @@ function Dashboard() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [editId, setEditId] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const token = localStorage.getItem('token');
 
@@ -40,24 +41,52 @@ function Dashboard() {
   }
 
   function handleImageChange(e) {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+
+    // Max 5 images
+    if (files.length > 5) {
+      setError('You can only upload a maximum of 5 images');
+      return;
     }
+
+    // Max 10MB each
+    const oversized = files.filter(f => f.size > 10 * 1024 * 1024);
+    if (oversized.length > 0) {
+      setError('Each image must be less than 10MB');
+      return;
+    }
+
+    setError('');
+    setImageFiles(files);
+
+    // Create previews for all selected images
+    const previews = files.map(file => URL.createObjectURL(file));
+    setImagePreviews(previews);
+  }
+
+  function removeImage(index) {
+    const newFiles = imageFiles.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setImageFiles(newFiles);
+    setImagePreviews(newPreviews);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError('');
     setLoading(true);
+
     try {
       const formData = new FormData();
       Object.keys(form).forEach(key => {
         formData.append(key, form[key]);
       });
-      if (imageFile) {
-        formData.append('image', imageFile);
-      }
+
+      // Append all images
+      imageFiles.forEach(file => {
+        formData.append('images', file);
+      });
+
       if (editId) {
         await axios.put(
           `${BASE_URL}/api/listings/${editId}`,
@@ -77,27 +106,46 @@ function Dashboard() {
           }}
         );
       }
+
       setForm(EMPTY_FORM);
       setEditId(null);
       setShowForm(false);
-      setImageFile(null);
-      setImagePreview(null);
+      setImageFiles([]);
+      setImagePreviews([]);
       fetchMyListings();
     } catch (err) {
-      alert(err.response?.data?.message || 'Error saving listing');
+      setError(err.response?.data?.message || 'Error saving listing');
     }
     setLoading(false);
   }
 
   function startEdit(listing) {
-    setForm({ ...listing });
+    setForm({
+      category: listing.category,
+      serviceType: listing.serviceType,
+      productType: listing.productType || '',
+      price: listing.price,
+      location: listing.location,
+      phone: listing.phone,
+      whatsapp: listing.whatsapp || '',
+      deliveryAvailable: listing.deliveryAvailable,
+      deliveryTime: listing.deliveryTime || '',
+      status: listing.status
+    });
     setEditId(listing._id);
     setShowForm(true);
-    setImagePreview(
-      listing.image
-        ? `${BASE_URL}/uploads/${listing.image}`
-        : null
-    );
+
+    // Show existing images as previews
+    if (listing.images && listing.images.length > 0) {
+      setImagePreviews(listing.images.map(img =>
+        `${BASE_URL}/uploads/${img}`
+      ));
+    } else if (listing.image) {
+      setImagePreviews([`${BASE_URL}/uploads/${listing.image}`]);
+    } else {
+      setImagePreviews([]);
+    }
+    setImageFiles([]);
     window.scrollTo(0, 0);
   }
 
@@ -112,6 +160,14 @@ function Dashboard() {
     } catch (err) {
       alert('Could not delete listing');
     }
+  }
+
+  function getImages(listing) {
+    if (listing.images && listing.images.length > 0) {
+      return listing.images;
+    }
+    if (listing.image) return [listing.image];
+    return [];
   }
 
   if (user.role !== 'supplier') {
@@ -132,8 +188,9 @@ function Dashboard() {
       <button className="btn btn-blue" onClick={() => {
         setForm(EMPTY_FORM);
         setEditId(null);
-        setImageFile(null);
-        setImagePreview(null);
+        setImageFiles([]);
+        setImagePreviews([]);
+        setError('');
         setShowForm(!showForm);
       }}>
         {showForm ? 'Cancel' : '+ Add new listing'}
@@ -144,6 +201,18 @@ function Dashboard() {
           <h3 style={{ marginBottom: 12 }}>
             {editId ? 'Edit listing' : 'New listing'}
           </h3>
+
+          {error && (
+            <div style={{
+              background: '#ffebee', border: '1px solid #ef9a9a',
+              borderRadius: 8, padding: '10px 14px', marginBottom: 12
+            }}>
+              <p style={{ color: '#c62828', fontSize: 13, margin: 0 }}>
+                ❌ {error}
+              </p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <label>Category</label>
             <select name="category" value={form.category}
@@ -205,28 +274,93 @@ function Dashboard() {
               Delivery available
             </label>
 
-            <label>📷 Product Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              style={{ marginBottom: 12 }}
-            />
+            {/* Multiple image upload */}
+            <div style={{
+              border: '2px dashed #1a73e8', borderRadius: 12,
+              padding: 16, marginBottom: 12, textAlign: 'center',
+              background: '#f8fbff'
+            }}>
+              <p style={{ fontSize: 24, margin: '0 0 8px' }}>📷</p>
+              <p style={{ fontSize: 14, fontWeight: 600,
+                          color: '#1a73e8', margin: '0 0 4px' }}>
+                Upload Product Photos
+              </p>
+              <p style={{ fontSize: 12, color: '#888', margin: '0 0 12px' }}>
+                You can upload up to 5 photos • Max 10MB each
+              </p>
+              <input
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                multiple
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+                id="imageUpload"
+              />
+              <label htmlFor="imageUpload"
+                style={{
+                  background: '#1a73e8', color: 'white',
+                  padding: '8px 20px', borderRadius: 8,
+                  cursor: 'pointer', fontSize: 13,
+                  fontWeight: 600, display: 'inline-block'
+                }}>
+                Choose Photos
+              </label>
+            </div>
 
-            {imagePreview && (
+            {/* Image previews */}
+            {imagePreviews.length > 0 && (
               <div style={{ marginBottom: 12 }}>
-                <p style={{ fontSize: 13, color: '#666', marginBottom: 6 }}>
-                  Image preview:
+                <p style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>
+                  Selected photos ({imagePreviews.length}/5):
                 </p>
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  style={{
-                    width: '100%', height: 200,
-                    objectFit: 'cover', borderRadius: 8,
-                    border: '1px solid #ddd'
-                  }}
-                />
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 8
+                }}>
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} style={{ position: 'relative' }}>
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        style={{
+                          width: '100%', height: 90,
+                          objectFit: 'cover', borderRadius: 8,
+                          border: index === 0
+                            ? '2px solid #1a73e8' : '1px solid #ddd'
+                        }}
+                      />
+                      {index === 0 && (
+                        <div style={{
+                          position: 'absolute', bottom: 4, left: 4,
+                          background: '#1a73e8', color: 'white',
+                          fontSize: 10, padding: '2px 6px',
+                          borderRadius: 4, fontWeight: 600
+                        }}>
+                          Main
+                        </div>
+                      )}
+                      {imageFiles.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          style={{
+                            position: 'absolute', top: 4, right: 4,
+                            width: 22, height: 22, background: '#c62828',
+                            color: 'white', border: 'none',
+                            borderRadius: '50%', cursor: 'pointer',
+                            fontSize: 12, display: 'flex',
+                            alignItems: 'center', justifyContent: 'center'
+                          }}>
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontSize: 11, color: '#1a73e8', margin: '6px 0 0' }}>
+                  The first photo with blue border will be the main photo
+                </p>
               </div>
             )}
 
@@ -244,59 +378,95 @@ function Dashboard() {
           You have no listings yet. Add one above!
         </p>
       ) : (
-        listings.map(listing => (
-          <div className="card" key={listing._id}>
-            {listing.image ? (
-              <img
-                src={`${BASE_URL}/uploads/${listing.image}`}
-                alt={listing.productType}
-                style={{
-                  width: '100%', height: 180,
-                  objectFit: 'cover', borderRadius: 8,
-                  marginBottom: 12
-                }}
-              />
-            ) : (
-              <div style={{
-                width: '100%', height: 120,
-                background: listing.category === 'water'
-                  ? '#e3f2fd' : '#fff3e0',
-                borderRadius: 8, marginBottom: 12,
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: 48
-              }}>
-                {listing.category === 'water' ? '💧' : '🔥'}
+        listings.map(listing => {
+          const imgs = getImages(listing);
+          return (
+            <div className="card" key={listing._id}>
+              {/* Show images */}
+              {imgs.length > 0 ? (
+                <div>
+                  <img
+                    src={`${BASE_URL}/uploads/${imgs[0]}`}
+                    alt={listing.productType}
+                    style={{
+                      width: '100%', height: 180,
+                      objectFit: 'cover', borderRadius: 8,
+                      marginBottom: imgs.length > 1 ? 8 : 12
+                    }}
+                  />
+                  {/* Thumbnail row for multiple images */}
+                  {imgs.length > 1 && (
+                    <div style={{
+                      display: 'flex', gap: 6, marginBottom: 12,
+                      overflowX: 'auto'
+                    }}>
+                      {imgs.slice(1).map((img, i) => (
+                        <img
+                          key={i}
+                          src={`${BASE_URL}/uploads/${img}`}
+                          alt={`Photo ${i + 2}`}
+                          style={{
+                            width: 60, height: 60,
+                            objectFit: 'cover', borderRadius: 6,
+                            border: '1px solid #ddd', flexShrink: 0
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{
+                  width: '100%', height: 120,
+                  background: listing.category === 'water'
+                    ? '#e3f2fd' : '#fff3e0',
+                  borderRadius: 8, marginBottom: 12,
+                  display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: 48
+                }}>
+                  {listing.category === 'water' ? '💧' : '🔥'}
+                </div>
+              )}
+
+              <div style={{ display: 'flex',
+                            justifyContent: 'space-between' }}>
+                <h3>{listing.productType}</h3>
+                {imgs.length > 0 && (
+                  <span style={{ fontSize: 12, color: '#888' }}>
+                    📷 {imgs.length} photo{imgs.length > 1 ? 's' : ''}
+                  </span>
+                )}
               </div>
-            )}
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <h3>{listing.productType}</h3>
+
+              <span className={`badge badge-${listing.category === 'water'
+                ? 'blue' : 'orange'}`}>
+                {listing.category}
+              </span>
+              <span className="badge badge-gray">{listing.serviceType}</span>
+              <p>📍 {listing.location}</p>
+              <p><strong>KSh {listing.price?.toLocaleString()}</strong></p>
+              <p style={{
+                color: listing.status === 'available'
+                  ? '#2e7d32' : '#c62828', fontSize: 13
+              }}>
+                {listing.status === 'available'
+                  ? '✅ Available' : '❌ Out of stock'}
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                <button className="btn btn-outline"
+                        onClick={() => startEdit(listing)}
+                        style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
+                  ✏️ Edit
+                </button>
+                <button className="btn btn-red"
+                        onClick={() => deleteListing(listing._id)}
+                        style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
+                  🗑️ Delete
+                </button>
+              </div>
             </div>
-            <span className={`badge badge-${listing.category === 'water'
-              ? 'blue' : 'orange'}`}>
-              {listing.category}
-            </span>
-            <span className="badge badge-gray">{listing.serviceType}</span>
-            <p>📍 {listing.location}</p>
-            <p><strong>KSh {listing.price?.toLocaleString()}</strong></p>
-            <p style={{ color: listing.status === 'available'
-              ? '#2e7d32' : '#c62828', fontSize: 13 }}>
-              {listing.status === 'available'
-                ? '✅ Available' : '❌ Out of stock'}
-            </p>
-            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-              <button className="btn btn-outline"
-                      onClick={() => startEdit(listing)}
-                      style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
-                ✏️ Edit
-              </button>
-              <button className="btn btn-red"
-                      onClick={() => deleteListing(listing._id)}
-                      style={{ flex: 1, padding: '8px 0', marginTop: 0 }}>
-                🗑️ Delete
-              </button>
-            </div>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );
