@@ -13,7 +13,10 @@ function Home() {
   const [activeFilter, setActiveFilter] = useState('all');
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
-  // FIX 1: Single useEffect with [filters] — runs on mount and on filter change
+  useEffect(() => {
+    fetchListings();
+  }, []);
+
   useEffect(() => {
     fetchListings();
   }, [filters]);
@@ -22,9 +25,9 @@ function Home() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (filters.category)    params.append('category', filters.category);
+      if (filters.category) params.append('category', filters.category);
       if (filters.serviceType) params.append('serviceType', filters.serviceType);
-      if (filters.location)    params.append('location', filters.location);
+      if (filters.location) params.append('location', filters.location);
       const res = await API.get(`/listings?${params.toString()}`);
       setListings(res.data);
     } catch (err) {
@@ -35,31 +38,14 @@ function Home() {
 
   function handleFilterButton(filter) {
     setActiveFilter(filter);
-    // FIX 2: Clean filter objects — no stale spread
-    // FIX 3: Added 'near' handler using geolocation
     if (filter === 'all') {
       setFilters({ category: '', serviceType: '', location: '' });
     } else if (filter === 'water') {
-      setFilters({ category: 'water', serviceType: '', location: '' });
+      setFilters({ ...filters, category: 'water', serviceType: '' });
     } else if (filter === 'gas') {
-      setFilters({ category: 'gas', serviceType: '', location: '' });
+      setFilters({ ...filters, category: 'gas', serviceType: '' });
     } else if (filter === 'delivery') {
-      setFilters({ category: '', serviceType: 'refill', location: '' });
-    } else if (filter === 'near') {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            setFilters({
-              category: '',
-              serviceType: '',
-              location: `${pos.coords.latitude},${pos.coords.longitude}`
-            });
-          },
-          () => {
-            setFilters({ category: '', serviceType: '', location: '' });
-          }
-        );
-      }
+      setFilters({ ...filters, serviceType: 'refill', category: '' });
     }
   }
 
@@ -84,8 +70,10 @@ function Home() {
         padding: '20px 16px 24px',
         marginBottom: 0
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between',
-                      alignItems: 'center', marginBottom: 20 }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between',
+          alignItems: 'center', marginBottom: 20
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{
               width: 34, height: 34, background: 'white',
@@ -138,7 +126,7 @@ function Home() {
             placeholder="Search water, gas near you..."
             value={filters.location}
             onChange={e => setFilters({ ...filters, location: e.target.value })}
-            onKeyDown={e => e.key === 'Enter' && fetchListings()}
+            onKeyPress={e => e.key === 'Enter' && fetchListings()}
             style={{
               background: 'none', border: 'none',
               color: 'white', fontSize: 14, flex: 1,
@@ -162,31 +150,38 @@ function Home() {
       <div style={{ padding: '16px' }}>
 
         {/* Category cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr',
-                      gap: 10, marginBottom: 16 }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: 10, marginBottom: 16
+        }}>
           <div
             onClick={() => handleFilterButton('water')}
             style={{
               background: activeFilter === 'water' ? '#1a73e8' : '#e3f2fd',
               borderRadius: 12, padding: 12,
               display: 'flex', alignItems: 'center',
-              gap: 10, cursor: 'pointer', transition: 'all 0.2s'
+              gap: 10, cursor: 'pointer'
             }}>
             <div style={{
               width: 42, height: 42,
               background: activeFilter === 'water'
                 ? 'rgba(255,255,255,0.2)' : '#1a73e8',
               borderRadius: 10, display: 'flex',
-              alignItems: 'center', justifyContent: 'center', fontSize: 20
+              alignItems: 'center', justifyContent: 'center',
+              fontSize: 20
             }}>💧</div>
             <div>
-              <p style={{ fontSize: 11,
-                          color: activeFilter === 'water'
-                            ? 'rgba(255,255,255,0.8)' : '#1565c0',
-                          margin: 0 }}>Water</p>
-              <p style={{ fontSize: 14, fontWeight: 500,
-                          color: activeFilter === 'water' ? 'white' : '#1565c0',
-                          margin: 0 }}>Refill</p>
+              <p style={{
+                fontSize: 11,
+                color: activeFilter === 'water'
+                  ? 'rgba(255,255,255,0.8)' : '#1565c0',
+                margin: 0
+              }}>Water</p>
+              <p style={{
+                fontSize: 14, fontWeight: 500,
+                color: activeFilter === 'water' ? 'white' : '#1565c0',
+                margin: 0
+              }}>Refill</p>
             </div>
           </div>
 
@@ -203,29 +198,36 @@ function Home() {
               background: activeFilter === 'gas'
                 ? 'rgba(255,255,255,0.2)' : '#f57c00',
               borderRadius: 10, display: 'flex',
-              alignItems: 'center', justifyContent: 'center', fontSize: 20
+              alignItems: 'center', justifyContent: 'center',
+              fontSize: 20
             }}>🔥</div>
             <div>
-              <p style={{ fontSize: 11,
-                          color: activeFilter === 'gas'
-                            ? 'rgba(255,255,255,0.8)' : '#e65100',
-                          margin: 0 }}>Gas</p>
-              <p style={{ fontSize: 14, fontWeight: 500,
-                          color: activeFilter === 'gas' ? 'white' : '#e65100',
-                          margin: 0 }}>Cylinder</p>
+              <p style={{
+                fontSize: 11,
+                color: activeFilter === 'gas'
+                  ? 'rgba(255,255,255,0.8)' : '#e65100',
+                margin: 0
+              }}>Gas</p>
+              <p style={{
+                fontSize: 14, fontWeight: 500,
+                color: activeFilter === 'gas' ? 'white' : '#e65100',
+                margin: 0
+              }}>Cylinder</p>
             </div>
           </div>
         </div>
 
         {/* Filter pills */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16,
-                      overflowX: 'auto', paddingBottom: 4 }}>
+        <div style={{
+          display: 'flex', gap: 8,
+          marginBottom: 16, overflowX: 'auto', paddingBottom: 4
+        }}>
           {[
-            { key: 'all',      label: 'All' },
-            { key: 'near',     label: 'Near me' },
+            { key: 'all', label: 'All' },
+            { key: 'near', label: 'Near me' },
             { key: 'delivery', label: 'Delivery' },
-            { key: 'water',    label: 'Water' },
-            { key: 'gas',      label: 'Gas' }
+            { key: 'water', label: 'Water' },
+            { key: 'gas', label: 'Gas' }
           ].map(item => (
             <div
               key={item.key}
@@ -259,8 +261,10 @@ function Home() {
         </div>
 
         {/* Section title */}
-        <div style={{ display: 'flex', justifyContent: 'space-between',
-                      alignItems: 'center', marginBottom: 12 }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between',
+          alignItems: 'center', marginBottom: 12
+        }}>
           <p style={{ fontSize: 15, fontWeight: 500, color: '#1a1a2e', margin: 0 }}>
             Featured suppliers
           </p>
@@ -290,9 +294,11 @@ function Home() {
               <div style={{
                 background: 'white', borderRadius: 16,
                 border: '0.5px solid #f0f0f0', overflow: 'hidden',
-                marginBottom: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
+                marginBottom: 14,
+                boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
               }}>
 
+                {/* Image */}
                 {listing.image ? (
                   <img
                     src={`${BASE_URL}/uploads/${listing.image}`}
@@ -306,26 +312,35 @@ function Home() {
                       ? 'linear-gradient(135deg, #e3f2fd, #bbdefb)'
                       : 'linear-gradient(135deg, #fff3e0, #ffe0b2)',
                     display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', fontSize: 48, position: 'relative'
+                    justifyContent: 'center', fontSize: 48,
+                    position: 'relative'
                   }}>
                     {listing.category === 'water' ? '💧' : '🔥'}
                     <div style={{
                       position: 'absolute', top: 8, right: 8,
-                      background: '#e8f5e9', color: '#2e7d32',
+                      background: listing.status === 'available'
+                        ? '#e8f5e9' : '#ffebee',
+                      color: listing.status === 'available'
+                        ? '#2e7d32' : '#c62828',
                       fontSize: 11, fontWeight: 500,
                       padding: '3px 8px', borderRadius: 20
                     }}>
-                      {listing.status === 'available' ? 'Available' : 'Out of stock'}
+                      {listing.status === 'available'
+                        ? 'Available' : 'Out of stock'}
                     </div>
                   </div>
                 )}
 
                 <div style={{ padding: 12 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between',
-                                alignItems: 'flex-start', marginBottom: 6 }}>
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'flex-start', marginBottom: 6
+                  }}>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontWeight: 500, fontSize: 15,
-                                  color: '#1a1a2e', margin: 0 }}>
+                      <p style={{
+                        fontWeight: 500, fontSize: 15,
+                        color: '#1a1a2e', margin: 0
+                      }}>
                         {listing.productType ||
                           `${listing.category} ${listing.serviceType}`}
                       </p>
@@ -342,10 +357,15 @@ function Home() {
                     </p>
                   </div>
 
-                  <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
+                  <div style={{
+                    display: 'flex', gap: 6,
+                    marginBottom: 10, flexWrap: 'wrap'
+                  }}>
                     <span style={{
-                      background: listing.category === 'water' ? '#e3f2fd' : '#fff3e0',
-                      color: listing.category === 'water' ? '#1565c0' : '#e65100',
+                      background: listing.category === 'water'
+                        ? '#e3f2fd' : '#fff3e0',
+                      color: listing.category === 'water'
+                        ? '#1565c0' : '#e65100',
                       fontSize: 11, fontWeight: 500,
                       padding: '2px 8px', borderRadius: 20
                     }}>
@@ -364,21 +384,25 @@ function Home() {
                     )}
                   </div>
 
-                  {/* FIX 4: Added missing opening <a tags on both buttons */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    <a
+                  {/* Call and WhatsApp buttons */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr', gap: 8
+                  }}>
+                    
                       href={`tel:${listing.phone}`}
                       onClick={e => e.stopPropagation()}
                       style={{
                         background: '#1a73e8', color: 'white',
                         padding: '9px 0', borderRadius: 10,
                         textAlign: 'center', fontSize: 13,
-                        fontWeight: 500, textDecoration: 'none', display: 'block'
+                        fontWeight: 500, textDecoration: 'none',
+                        display: 'block'
                       }}>
                       📞 Call
                     </a>
                     {listing.whatsapp ? (
-                      <a
+                      
                         href={`https://wa.me/${listing.whatsapp.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noreferrer"
@@ -387,7 +411,8 @@ function Home() {
                           background: '#e8f5e9', color: '#2e7d32',
                           padding: '9px 0', borderRadius: 10,
                           textAlign: 'center', fontSize: 13,
-                          fontWeight: 500, textDecoration: 'none', display: 'block'
+                          fontWeight: 500, textDecoration: 'none',
+                          display: 'block'
                         }}>
                         💬 WhatsApp
                       </a>
@@ -410,22 +435,25 @@ function Home() {
 
       {/* Bottom navigation */}
       <div style={{
-        position: 'sticky', bottom: 0, background: 'white',
+        position: 'sticky', bottom: 0,
+        background: 'white',
         borderTop: '0.5px solid #f0f0f0',
         display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
         padding: '10px 0'
       }}>
         {[
-          { icon: '🏠', label: 'Home',     active: true },
-          { icon: '🔍', label: 'Search',   active: false },
+          { icon: '🏠', label: 'Home', active: true, link: '/' },
+          { icon: '🔍', label: 'Search', active: false, link: '/' },
           { icon: '🚨', label: 'Requests', active: false, link: '/requests' },
-          { icon: '👤', label: 'Profile',  active: false }
+          { icon: '👤', label: 'Profile', active: false, link: '/auth' }
         ].map((item, i) => (
           <Link
             key={i}
-            to={item.link || '#'}
-            style={{ display: 'flex', flexDirection: 'column',
-                     alignItems: 'center', gap: 3, textDecoration: 'none' }}>
+            to={item.link}
+            style={{
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 3, textDecoration: 'none'
+            }}>
             <span style={{ fontSize: 22 }}>{item.icon}</span>
             <span style={{
               fontSize: 11,
