@@ -37,26 +37,21 @@ function TermsAndConditions() {
         </div>
       </div>
 
-      <div style={{ padding: '24px 20px', maxWidth: 480,
-                    margin: '0 auto' }}>
+      <div style={{ padding: '24px 20px', maxWidth: 480, margin: '0 auto' }}>
 
-        {/* Introduction */}
         <div style={{ background: 'white', borderRadius: 12,
                       padding: 20, marginBottom: 16,
                       boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-          <p style={{ color: '#555', fontSize: 14,
-                      lineHeight: 1.7, margin: 0 }}>
+          <p style={{ color: '#555', fontSize: 14, lineHeight: 1.7, margin: 0 }}>
             Welcome to <strong>HomeFil</strong>. By using our app you agree
-            to these terms. Please read them carefully before using our
-            services. HomeFil connects customers with water and gas
-            suppliers in Kenya.
+            to these terms. HomeFil connects customers with water and gas
+            suppliers in Kenya. Please read carefully before using our services.
           </p>
         </div>
 
         {[
           {
-            number: '1',
-            title: 'Who Can Use HomeFil',
+            number: '1', title: 'Who Can Use HomeFil',
             items: [
               'You must be 18 years or older to use HomeFil',
               'You must provide accurate and truthful information when registering',
@@ -65,8 +60,7 @@ function TermsAndConditions() {
             ]
           },
           {
-            number: '2',
-            title: 'For Customers',
+            number: '2', title: 'For Customers',
             items: [
               'You can browse and contact water and gas suppliers for free',
               'All payments are made directly to suppliers — HomeFil does not handle money',
@@ -76,8 +70,7 @@ function TermsAndConditions() {
             ]
           },
           {
-            number: '3',
-            title: 'For Suppliers',
+            number: '3', title: 'For Suppliers',
             items: [
               'Suppliers must be approved by HomeFil admin before listing products',
               'All listings must be accurate and up to date',
@@ -88,8 +81,7 @@ function TermsAndConditions() {
             ]
           },
           {
-            number: '4',
-            title: 'Payments',
+            number: '4', title: 'Payments',
             items: [
               'HomeFil does NOT process any payments',
               'All transactions happen directly between customers and suppliers',
@@ -99,30 +91,25 @@ function TermsAndConditions() {
             ]
           },
           {
-            number: '5',
-            title: 'Prohibited Activities',
+            number: '5', title: 'Prohibited Activities',
             items: [
               'Creating fake accounts or impersonating others',
               'Posting false or misleading product listings',
               'Harassing or threatening other users',
               'Using HomeFil for any illegal activities',
-              'Sharing your account with other people',
-              'Spamming other users with messages'
+              'Sharing your account with other people'
             ]
           },
           {
-            number: '6',
-            title: 'Account Suspension',
+            number: '6', title: 'Account Suspension',
             items: [
               'HomeFil can suspend or delete accounts that violate these terms',
               'Suppliers with fake listings will be permanently banned',
-              'Customers who misuse the platform will be removed',
-              'No refund of any kind will be issued for suspended accounts'
+              'Customers who misuse the platform will be removed'
             ]
           },
           {
-            number: '7',
-            title: 'Changes to Terms',
+            number: '7', title: 'Changes to Terms',
             items: [
               'HomeFil may update these terms at any time',
               'Users will be notified of major changes',
@@ -166,10 +153,11 @@ function TermsAndConditions() {
           </div>
         ))}
 
-        {/* Contact */}
-        <div style={{ background: 'linear-gradient(135deg, #1a73e8, #f57c00)',
-                      borderRadius: 12, padding: 20, marginBottom: 16,
-                      textAlign: 'center' }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #1a73e8, #f57c00)',
+          borderRadius: 12, padding: 20,
+          marginBottom: 16, textAlign: 'center'
+        }}>
           <p style={{ color: 'white', fontSize: 14,
                       fontWeight: 600, margin: '0 0 4px' }}>
             Questions about our Terms?
@@ -180,16 +168,14 @@ function TermsAndConditions() {
           </p>
         </div>
 
-        <button
-          onClick={() => navigate(-1)}
+        <button onClick={() => navigate(-1)}
           style={{
             width: '100%', padding: 15,
             background: 'linear-gradient(135deg, #1a73e8, #f57c00)',
-            color: 'white', border: 'none',
-            borderRadius: 12, fontSize: 16,
-            fontWeight: 700, cursor: 'pointer'
+            color: 'white', border: 'none', borderRadius: 12,
+            fontSize: 16, fontWeight: 700, cursor: 'pointer'
           }}>
-          ← Back to Sign Up
+          ← Go Back
         </button>
       </div>
     </div>

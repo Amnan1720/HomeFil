@@ -37,27 +37,22 @@ function PrivacyPolicy() {
         </div>
       </div>
 
-      <div style={{ padding: '24px 20px', maxWidth: 480,
-                    margin: '0 auto' }}>
+      <div style={{ padding: '24px 20px', maxWidth: 480, margin: '0 auto' }}>
 
-        {/* Introduction */}
         <div style={{ background: 'white', borderRadius: 12,
                       padding: 20, marginBottom: 16,
                       boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-          <p style={{ color: '#555', fontSize: 14,
-                      lineHeight: 1.7, margin: 0 }}>
+          <p style={{ color: '#555', fontSize: 14, lineHeight: 1.7, margin: 0 }}>
             At <strong>HomeFil</strong> we take your privacy seriously.
-            This policy explains what information we collect, how we use
-            it and how we protect it. We only collect what is necessary
-            to provide our water and gas delivery connection service.
+            This policy explains what information we collect, how we use it
+            and how we protect it. We only collect what is necessary to
+            provide our water and gas delivery connection service.
           </p>
         </div>
 
         {[
           {
-            number: '1',
-            icon: '📋',
-            title: 'Information We Collect',
+            number: '1', icon: '📋', title: 'Information We Collect',
             items: [
               'Full name when you register',
               'Email address for your account',
@@ -68,9 +63,7 @@ function PrivacyPolicy() {
             ]
           },
           {
-            number: '2',
-            icon: '🔍',
-            title: 'How We Use Your Information',
+            number: '2', icon: '🔍', title: 'How We Use Your Information',
             items: [
               'To create and manage your HomeFil account',
               'To show your listings to nearby customers',
@@ -81,34 +74,26 @@ function PrivacyPolicy() {
             ]
           },
           {
-            number: '3',
-            icon: '🔒',
-            title: 'How We Protect Your Data',
+            number: '3', icon: '🔒', title: 'How We Protect Your Data',
             items: [
               'All passwords are encrypted and never stored as plain text',
               'We use secure HTTPS connections for all data',
               'Your data is stored on secure cloud servers',
               'Only you and admins can access your account details',
-              'We do not sell your personal data to anyone',
-              'Regular security checks are performed on our systems'
+              'We do not sell your personal data to anyone'
             ]
           },
           {
-            number: '4',
-            icon: '📤',
-            title: 'Information We Share',
+            number: '4', icon: '📤', title: 'Information We Share',
             items: [
               'Supplier phone numbers are shown to customers who view listings',
               'Customer location is shown when posting urgent requests',
               'We do not share your data with third party companies',
-              'We may share data if required by Kenya law enforcement',
-              'Aggregate anonymous data may be used for app improvement'
+              'We may share data if required by Kenya law enforcement'
             ]
           },
           {
-            number: '5',
-            icon: '💳',
-            title: 'Payment Information',
+            number: '5', icon: '💳', title: 'Payment Information',
             items: [
               'HomeFil does NOT collect any payment information',
               'All payments happen directly between users',
@@ -117,36 +102,20 @@ function PrivacyPolicy() {
             ]
           },
           {
-            number: '6',
-            icon: '🍪',
-            title: 'Cookies and Storage',
-            items: [
-              'We use browser storage to keep you logged in',
-              'Your saved contacts are stored on your device only',
-              'No tracking cookies are used on HomeFil',
-              'Clearing your browser data will log you out'
-            ]
-          },
-          {
-            number: '7',
-            icon: '👤',
-            title: 'Your Rights',
+            number: '6', icon: '👤', title: 'Your Rights',
             items: [
               'You can update your account information at any time',
               'You can delete your account by contacting support',
               'You can request a copy of your data from us',
-              'You can opt out of notifications at any time',
               'Contact us at support@homefil.com for any requests'
             ]
           },
           {
-            number: '8',
-            icon: '👶',
-            title: 'Children\'s Privacy',
+            number: '7', icon: '👶', title: "Children's Privacy",
             items: [
               'HomeFil is not intended for users under 18 years old',
               'We do not knowingly collect data from children',
-              'Parents should monitor their children\'s app usage'
+              "Parents should monitor their children's app usage"
             ]
           }
         ].map((section) => (
@@ -185,10 +154,11 @@ function PrivacyPolicy() {
           </div>
         ))}
 
-        {/* Contact */}
-        <div style={{ background: 'linear-gradient(135deg, #1a73e8, #f57c00)',
-                      borderRadius: 12, padding: 20,
-                      marginBottom: 16, textAlign: 'center' }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #1a73e8, #f57c00)',
+          borderRadius: 12, padding: 20,
+          marginBottom: 16, textAlign: 'center'
+        }}>
           <p style={{ color: 'white', fontSize: 14,
                       fontWeight: 600, margin: '0 0 4px' }}>
             Questions about your Privacy?
@@ -199,16 +169,14 @@ function PrivacyPolicy() {
           </p>
         </div>
 
-        <button
-          onClick={() => navigate(-1)}
+        <button onClick={() => navigate(-1)}
           style={{
             width: '100%', padding: 15,
             background: 'linear-gradient(135deg, #1a73e8, #f57c00)',
-            color: 'white', border: 'none',
-            borderRadius: 12, fontSize: 16,
-            fontWeight: 700, cursor: 'pointer'
+            color: 'white', border: 'none', borderRadius: 12,
+            fontSize: 16, fontWeight: 700, cursor: 'pointer'
           }}>
-          ← Back to Sign Up
+          ← Go Back
         </button>
       </div>
     </div>

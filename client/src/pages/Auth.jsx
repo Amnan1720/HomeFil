@@ -415,136 +415,30 @@ function Auth() {
           )}
 
           {/* Terms and conditions */}
-          {!isLogin && (
-            <label style={{ display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: 8, marginBottom: 16,
-                            cursor: 'pointer' }}>
-              <input type="checkbox"
-                     checked={agreedToTerms}
-                     onChange={e => setAgreedToTerms(e.target.checked)}
-                     style={{ width: 'auto', marginBottom: 0,
-                              marginTop: 2,
-                              accentColor: '#1a73e8' }} />
-              <span style={{ fontSize: 13, color: '#555' }}>
-                I agree to the{' '}
-                <span
-                  onClick={() => window.open('/terms', '_blank')}
-                  style={{ color: '#1a73e8', fontWeight: 600,
-                           cursor: 'pointer',
-                           textDecoration: 'underline' }}>
-                  Terms & Conditions
-                </span>
-                {' '}and{' '}
-                <span
-                  onClick={() => window.open('/privacy', '_blank')}
-                  style={{ color: '#1a73e8', fontWeight: 600,
-                           cursor: 'pointer',
-                           textDecoration: 'underline' }}>
-                  Privacy Policy
-                </span>
-              </span>
-            </label>
-          )}
-
-          {/* Submit button */}
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '15px',
-              background: loading ? '#ccc'
-                : 'linear-gradient(135deg, #1a73e8 0%, #f57c00 100%)',
-              color: 'white',
-              border: 'none',
-              borderRadius: 12,
-              fontSize: 16,
-              fontWeight: 700,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              marginBottom: 16
-            }}>
-            {loading ? 'Please wait...' : isLogin ? 'Login' : 'Sign Up'}
-          </button>
-
-          {/* Divider */}
-          <div style={{ display: 'flex', alignItems: 'center',
-                        gap: 12, marginBottom: 16 }}>
-            <div style={{ flex: 1, height: 1,
-                          background: '#e0e0e0' }} />
-            <span style={{ color: '#aaa', fontSize: 13 }}>
-              {isLogin ? 'or login with' : 'or sign up with'}
-            </span>
-            <div style={{ flex: 1, height: 1,
-                          background: '#e0e0e0' }} />
-          </div>
-
-          {/* Social buttons */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isLogin
-              ? '1fr 1fr 1fr' : '1fr 1fr',
-            gap: 10,
-            marginBottom: 20
-          }}>
-            <button type="button"
-              style={{ padding: '10px 8px',
-                       border: '1.5px solid #e0e0e0',
-                       borderRadius: 10, background: 'white',
-                       cursor: 'pointer', display: 'flex',
-                       alignItems: 'center',
-                       justifyContent: 'center',
-                       gap: 6, fontSize: 13,
-                       fontWeight: 500 }}>
-              <span style={{ fontWeight: 700, color: '#4285f4',
-                             fontSize: 16 }}>G</span>
-              <span style={{ color: '#555' }}>Google</span>
-            </button>
-            <button type="button"
-              style={{ padding: '10px 8px',
-                       border: '1.5px solid #e0e0e0',
-                       borderRadius: 10, background: 'white',
-                       cursor: 'pointer', display: 'flex',
-                       alignItems: 'center',
-                       justifyContent: 'center',
-                       gap: 6, fontSize: 13,
-                       fontWeight: 500 }}>
-              <span style={{ fontWeight: 700, color: '#1877f2',
-                             fontSize: 16 }}>f</span>
-              <span style={{ color: '#555' }}>Facebook</span>
-            </button>
-            {isLogin && (
-              <button type="button"
-                style={{ padding: '10px 8px',
-                         border: '1.5px solid #e0e0e0',
-                         borderRadius: 10, background: 'white',
-                         cursor: 'pointer', display: 'flex',
-                         alignItems: 'center',
-                         justifyContent: 'center',
-                         gap: 6, fontSize: 13,
-                         fontWeight: 500 }}>
-                <span style={{ fontSize: 16 }}>📱</span>
-                <span style={{ color: '#555' }}>Phone</span>
-              </button>
-            )}
-          </div>
-
-          {/* Toggle login/register */}
-          <p style={{ textAlign: 'center', fontSize: 14,
-                      color: '#555', margin: 0 }}>
-            {isLogin
-              ? "Don't have an account? "
-              : 'Already have an account? '}
-            <span
-              onClick={() => { setIsLogin(!isLogin); setError(''); }}
-              style={{ color: '#1a73e8', fontWeight: 700,
-                       cursor: 'pointer' }}>
-              {isLogin ? 'Sign up' : 'Login'}
-            </span>
-          </p>
-        </form>
-      </div>
-
+          <label style={{ display: 'flex', alignItems: 'flex-start',
+                gap: 8, marginBottom: 16, cursor: 'pointer' }}>
+  <input type="checkbox"
+         checked={agreedToTerms}
+         onChange={e => setAgreedToTerms(e.target.checked)}
+         style={{ width: 'auto', marginBottom: 0,
+                  marginTop: 2, accentColor: '#1a73e8' }} />
+  <span style={{ fontSize: 13, color: '#555' }}>
+    I agree to the{' '}
+    <span
+      onClick={(e) => { e.preventDefault(); window.open('/terms', '_blank'); }}
+      style={{ color: '#1a73e8', fontWeight: 600,
+               cursor: 'pointer', textDecoration: 'underline' }}>
+      Terms & Conditions
+    </span>
+    {' '}and{' '}
+    <span
+      onClick={(e) => { e.preventDefault(); window.open('/privacy', '_blank'); }}
+      style={{ color: '#1a73e8', fontWeight: 600,
+               cursor: 'pointer', textDecoration: 'underline' }}>
+      Privacy Policy
+    </span>
+  </span>
+</label>
       {/* Bottom badges */}
       {isLogin && (
         <div style={{ display: 'flex', gap: 24, marginTop: 24,
