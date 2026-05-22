@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../logo.png';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -12,47 +11,64 @@ function Navbar() {
     navigate('/auth');
   }
 
+  function getInitials(name) {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  }
+
   return (
     <nav className="navbar">
       <Link to="/" className="logo">
-        <img
-          src={logo}
-          alt="HomeFil Logo"
-          style={{
-            height: '36px',
-            width: '36px',
-            borderRadius: '50%',
-            objectFit: 'cover',
-            marginRight: '8px',
-            verticalAlign: 'middle'
-          }}
-        />
-        <span style={{ verticalAlign: 'middle' }}>HomeFil</span>
+        <span style={{ fontSize: 20 }}>🏠</span>
+        Home<span style={{ color: '#ffa726' }}>Fil</span>
       </Link>
-      <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
         {user ? (
           <>
             {user.role === 'admin' && (
-              <Link to="/admin">🛡️ Admin</Link>
+              <Link to="/admin"
+                style={{ color: 'white', fontSize: 12,
+                         background: 'rgba(255,255,255,0.2)',
+                         padding: '4px 10px', borderRadius: 20 }}>
+                🛡️ Admin
+              </Link>
             )}
             {user.role === 'supplier' && (
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/dashboard"
+                style={{ color: 'white', fontSize: 12,
+                         background: 'rgba(255,255,255,0.2)',
+                         padding: '4px 10px', borderRadius: 20 }}>
+                📋 Dashboard
+              </Link>
             )}
             {user.role !== 'admin' && (
-              <Link to="/requests">Requests</Link>
+              <Link to="/requests"
+                style={{ color: 'white', fontSize: 12 }}>
+                🚨
+              </Link>
             )}
-            <span style={{ color: 'white', fontSize: 13 }}>
-              Hi, {user.name.split(' ')[0]}
-            </span>
-            <button onClick={handleLogout}
-              style={{ background: 'rgba(255,255,255,0.2)', color: 'white',
-                       border: 'none', padding: '6px 12px', borderRadius: 6,
-                       cursor: 'pointer', fontSize: 13 }}>
-              Logout
-            </button>
+            <div
+              onClick={handleLogout}
+              style={{
+                width: 32, height: 32,
+                background: '#ffa726',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white', fontWeight: 700,
+                fontSize: 12, cursor: 'pointer'
+              }}>
+              {getInitials(user.name)}
+            </div>
           </>
         ) : (
-          <Link to="/auth">Login</Link>
+          <Link to="/auth"
+            style={{ color: 'white', fontSize: 13,
+                     background: 'rgba(255,255,255,0.2)',
+                     padding: '6px 14px', borderRadius: 20 }}>
+            Login
+          </Link>
         )}
       </div>
     </nav>
