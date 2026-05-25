@@ -1,72 +1,83 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Droplets, Flame, Shield, LayoutDashboard, AlertCircle, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { colors, font, weight } from '../theme/tokens';
 
-function Navbar() {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
+export default function Navbar() {
+  var auth = useAuth();
+  var user = auth.user;
+  var navigate = useNavigate();
 
-  function handleLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/auth');
+  function init(name) {
+    if (!name) return 'U';
+    return name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
   }
 
-  function getInitials(name) {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  function handleLogout() {
+    auth.logout();
+    navigate('/auth');
   }
 
   return (
     <nav className="navbar">
       <Link to="/" className="logo">
-        <span style={{ fontSize: 20 }}>🏠</span>
-        Home<span style={{ color: '#ffa726' }}>Fil</span>
+        <div style={{ width: 28, height: 28, background: 'rgba(255,255,255,0.2)',
+                       borderRadius: '8px', display: 'flex', alignItems: 'center',
+                       justifyContent: 'center' }}>
+          <Droplets size={16} color="white" />
+        </div>
+        <span>Home<span style={{ color: '#ffa726' }}>Fil</span></span>
       </Link>
 
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         {user ? (
           <>
             {user.role === 'admin' && (
               <Link to="/admin"
-                style={{ color: 'white', fontSize: 12,
-                         background: 'rgba(255,255,255,0.2)',
-                         padding: '4px 10px', borderRadius: 20 }}>
-                🛡️ Admin
+                style={{ display: 'flex', alignItems: 'center', gap: '4px',
+                          color: 'white', fontSize: font.sm, fontWeight: weight.medium }}>
+                <Shield size={15} />
+                Admin
               </Link>
             )}
             {user.role === 'supplier' && (
-              <Link to="/dashboard"
-                style={{ color: 'white', fontSize: 12,
-                         background: 'rgba(255,255,255,0.2)',
-                         padding: '4px 10px', borderRadius: 20 }}>
-                📋 Dashboard
+              <Link to="/supplier/dashboard"
+                style={{ display: 'flex', alignItems: 'center', gap: '4px',
+                          color: 'white', fontSize: font.sm, fontWeight: weight.medium }}>
+                <LayoutDashboard size={15} />
+                Dashboard
               </Link>
             )}
-            {user.role !== 'admin' && (
-              <Link to="/requests"
-                style={{ color: 'white', fontSize: 12 }}>
-                🚨
+            {user.role === 'customer' && (
+              <Link to="/customer/requests"
+                style={{ color: 'white' }}>
+                <AlertCircle size={18} />
               </Link>
             )}
-            <div
-              onClick={handleLogout}
-              style={{
-                width: 32, height: 32,
-                background: '#ffa726',
-                borderRadius: '50%',
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white', fontWeight: 700,
-                fontSize: 12, cursor: 'pointer'
-              }}>
-              {getInitials(user.name)}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: 32, height: 32,
+                             background: 'rgba(255,255,255,0.2)',
+                             borderRadius: '50%', display: 'flex',
+                             alignItems: 'center', justifyContent: 'center',
+                             color: 'white', fontWeight: weight.bold,
+                             fontSize: '12px' }}>
+                {init(user.name)}
+              </div>
+              <button onClick={handleLogout}
+                style={{ background: 'none', border: 'none',
+                          cursor: 'pointer', color: 'rgba(255,255,255,0.8)',
+                          display: 'flex', alignItems: 'center' }}>
+                <LogOut size={16} />
+              </button>
             </div>
           </>
         ) : (
           <Link to="/auth"
-            style={{ color: 'white', fontSize: 13,
-                     background: 'rgba(255,255,255,0.2)',
-                     padding: '6px 14px', borderRadius: 20 }}>
+            style={{ background: 'rgba(255,255,255,0.2)',
+                      color: 'white', padding: '6px 14px',
+                      borderRadius: '20px', fontSize: font.sm,
+                      fontWeight: weight.medium }}>
             Login
           </Link>
         )}
@@ -74,5 +85,3 @@ function Navbar() {
     </nav>
   );
 }
-
-export default Navbar;
